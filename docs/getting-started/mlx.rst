@@ -106,7 +106,7 @@ validation and base-checkpoint fingerprints. Qwen3 MoE, multimodal LoRA, multipl
 and ``reuse_actor_base`` are not supported.
 
 QLoRA with a prequantized base (experimental)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ``--qlora`` supports SFT on dense Qwen3 and Ling-3.0-tiny with a local MLX
 4-bit affine checkpoint, group size 64. This uses MLX quantized matmuls with
@@ -214,7 +214,7 @@ Reproduce with local checkpoints; the tests never download models:
        --basetemp outputs/qwen-qlora-validation-new
 
 Ling-3.0-tiny LoRA (experimental)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The MLX LoRA resolver also implements Ling-3.0-tiny attention and MLP projections for
 ``model_type=bailing_hybrid`` with architecture ``BailingMoeV3ForCausalLM``.
