@@ -33,6 +33,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--residual-length", type=int, default=128)
     parser.add_argument("--warmup", type=int, default=2)
     parser.add_argument("--iters", type=int, default=20)
+    parser.add_argument(
+        "--cuda-graph",
+        action="store_true",
+        help="Capture each step in a CUDA graph and time replays, as AReno's decode loop runs.",
+    )
     parser.add_argument("--output", default=None)
     return parser.parse_args()
 
@@ -113,7 +118,15 @@ def bench_one(args, dtype: str, rows: int, context: int) -> dict:
     torch.cuda.empty_cache()
     torch.cuda.reset_peak_memory_stats()
     base = torch.cuda.memory_allocated()
-    times = _time(step, args.warmup, args.iters)
+    if args.cuda_graph:
+        step()  # compile kernels outside capture
+        torch.cuda.synchronize()
+        graph = torch.cuda.CUDAGraph()
+        with torch.cuda.graph(graph):
+            step()
+        times = _time(graph.replay, args.warmup, args.iters)
+    else:
+        times = _time(step, args.warmup, args.iters)
     workspace = torch.cuda.max_memory_allocated() - base
     tokens_read = rows * (context + 1)
     return {
