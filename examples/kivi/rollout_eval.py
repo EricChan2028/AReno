@@ -33,6 +33,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-prompt-tokens", type=int, default=512)
     parser.add_argument("--max-new-tokens", type=int, default=2048)
     parser.add_argument("--max-running-prompts", type=int, default=128)
+    parser.add_argument("--n-samples", type=int, default=1, help="Completions per prompt.")
+    parser.add_argument("--temperature", type=float, default=0.0, help="0 selects greedy decoding.")
+    parser.add_argument("--seed", type=int, default=None, help="Rollout sampling seed (stochastic decoding).")
     return parser.parse_args()
 
 
@@ -43,11 +46,11 @@ def _load_module(path: Path, name: str):
     return module
 
 
-async def _rollout(trainer, prompt_tokens, sampling_params, max_running_prompts):
+async def _rollout(trainer, prompt_tokens, n_samples, sampling_params, max_running_prompts):
     async with trainer.rollout_session(
         sampling_params=sampling_params, max_running_prompts=max_running_prompts, proxy=False
     ):
-        return await trainer.rollout_token_batch_async(prompt_tokens, 1, sampling_params)
+        return await trainer.rollout_token_batch_async(prompt_tokens, n_samples, sampling_params)
 
 
 def main() -> None:
@@ -79,21 +82,33 @@ def main() -> None:
         tokenizer = trainer.get_tokenizer()
         prompt_tokens = [encode_generation_prompt(tokenizer, record["prompt"]) for record in dataset]
         sampling_params = SamplingParams(
-            greedy=True, max_new_tokens=args.max_new_tokens, max_prompt_len=args.max_prompt_tokens
+            greedy=args.temperature == 0.0,
+            temperature=args.temperature if args.temperature > 0 else 1.0,
+            seed=args.seed,
+            max_new_tokens=args.max_new_tokens,
+            max_prompt_len=args.max_prompt_tokens,
         )
         start = time.perf_counter()
-        results = asyncio.run(_rollout(trainer, prompt_tokens, sampling_params, args.max_running_prompts))
+        results = asyncio.run(
+            _rollout(trainer, prompt_tokens, args.n_samples, sampling_params, args.max_running_prompts)
+        )
         elapsed = time.perf_counter() - start
     finally:
         trainer.close()
 
     output = Path(args.output)
     output.mkdir(parents=True, exist_ok=True)
-    sequences = [result.sequences[0] for result in results]
+    rows = [
+        (index, sample, sequence)
+        for index, result in enumerate(results)
+        for sample, sequence in enumerate(result.sequences)
+    ]
+    sequences = [sequence for _, _, sequence in rows]
     completions = list(tokenizer.batch_decode([sequence.resp_tokens for sequence in sequences]))
     rewards = []
     with (output / "rollouts.jsonl").open("w") as handle:
-        for index, (record, sequence, completion) in enumerate(zip(dataset, sequences, completions, strict=True)):
+        for (index, sample, sequence), completion in zip(rows, completions, strict=True):
+            record = dataset[index]
             reward = reward_fn(
                 make_reward_record(
                     prompt=record["prompt"], completion=completion, source_record=dict(record), answer=record["solutions"]
@@ -102,6 +117,7 @@ def main() -> None:
             rewards.append(reward)
             row = {
                 "index": index,
+                "sample": sample,
                 "prompt_tokens": len(prompt_tokens[index]),
                 "resp_tokens": sequence.resp_tokens,
                 "resp_logprobs": sequence.resp_logprobs,
@@ -112,8 +128,18 @@ def main() -> None:
     summary = {
         "kv_cache_dtype": args.kv_cache_dtype,
         "runtime": runtime,
-        "prompts": len(sequences),
+        "prompts": len(results),
+        "samples_per_prompt": args.n_samples,
+        "temperature": args.temperature,
+        "seed": args.seed,
         "accuracy": sum(rewards) / max(1, len(rewards)),
+        # Binomial standard error of the mean reward over all completions.
+        "accuracy_stderr": (
+            (sum(rewards) / len(rewards)) * (1 - sum(rewards) / len(rewards)) / len(rewards)
+        )
+        ** 0.5
+        if rewards
+        else None,
         "generated_tokens": generated,
         "mean_response_tokens": generated / max(1, len(sequences)),
         "rollout_seconds": elapsed,
