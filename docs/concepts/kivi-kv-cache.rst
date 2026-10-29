@@ -62,9 +62,12 @@ memory at a fixed concurrency or as headroom for more concurrent sequences or
 longer contexts.
 
 Quantization changes the attention scores and outputs, so generated tokens can
-differ from a model-dtype run. Validate quality on the target task; 4-bit keeps
-closer agreement than 2-bit, and a longer residual window trades memory for
-accuracy on recent tokens.
+differ from a model-dtype run. On Qwen3-0.6B, KIVI-4 kept GSM8K accuracy and
+long-context perplexity within noise of the model-dtype cache, while KIVI-2
+with ``R = 128`` lost several points of GSM8K accuracy; a 512-token residual
+window recovered it on GSM8K. ``examples/kivi/README.md`` reports these
+measurements with the commands that produce them. Validate quality on the
+target task before switching a workload to 2-bit.
 
 Configuration
 -------------
@@ -103,6 +106,11 @@ The runtime warns with a ``RuntimeWarning`` and keeps the model-dtype cache
 (``kv_cache_dtype="auto"``) for other model families, speculative decoding,
 non-CUDA devices, head dimensions that are not a power of two divisible by the
 group size, and group sizes that do not divide the KV block size.
+
+When the KIVI cache is allocated, the engine logs one line with its settings
+and size, for example
+``KIVI KV cache: dtype=kivi4 group_size=32 residual_length=128 blocks=1281 slots=129 bytes=14120386560``.
+A run without that line used the model-dtype cache.
 
 Validation
 ----------
