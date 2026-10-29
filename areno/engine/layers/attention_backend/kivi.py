@@ -291,11 +291,14 @@ def _build_prefill_plan(meta: InferMeta, spec: KiviSpec, block_size: int, device
 
 
 def unpack_codes(codes: torch.Tensor, bits: int) -> torch.Tensor:
-    """Expand packed ``(..., head_dim * bits // 8)`` uint8 codes to ``(..., head_dim)`` floats."""
+    """Expand packed ``(..., head_dim * bits // 8)`` uint8 codes to ``(..., head_dim)`` floats.
+
+    Byte ``j`` holds channels ``j * (8 // bits) + i`` at bit offset ``i * bits``.
+    """
 
     pack = 8 // bits
     shifts = torch.arange(pack, device=codes.device, dtype=torch.int32) * bits
-    fields = (codes.to(torch.int32).unsqueeze(-2) >> shifts.view(pack, 1)) & ((1 << bits) - 1)
+    fields = (codes.to(torch.int32).unsqueeze(-1) >> shifts) & ((1 << bits) - 1)
     return fields.reshape(*codes.shape[:-1], codes.shape[-1] * pack).to(torch.float32)
 
 
@@ -458,7 +461,7 @@ class KiviInferBackend(nn.Module):
         meta: InferMeta,
         scale: float,
     ) -> torch.Tensor:
-        from areno.accel.kernels.kivi import decode_attention, store_groups
+        from areno.accel.kernels.kivi import append_tokens, decode_attention
 
         if getattr(meta, "tokens_per_seq", 1) != 1:
             raise NotImplementedError("KIVI KV cache decodes one token per sequence; disable speculative decoding")
@@ -468,34 +471,24 @@ class KiviInferBackend(nn.Module):
         cached = meta.cache_seqlens
         slots = meta.recurrent_slots
         # 1) Rows whose residual window is full flush their oldest group into
-        #    the paged cache. Everything stays on device (CUDA-graph safe):
-        #    every row launches a candidate group and invalid ones exit early.
-        past = cached.long() - spec.residual_length
-        flush = (past >= spec.group_size) & (past % spec.group_size == 0)
-        group_start = torch.where(flush, past - spec.group_size, torch.zeros_like(past))
-        block_col = (group_start // cache.block_size).unsqueeze(1)
-        store_groups(
+        #    the paged cache, then every row appends its token to the ring.
+        #    One device-side kernel decides per row (CUDA-graph safe).
+        append_tokens(
+            k.to(cache.k_ring.dtype).contiguous(),
+            v.to(cache.v_ring.dtype).contiguous(),
+            cached,
+            slots,
+            meta.block_table,
             cache.k_ring,
             cache.v_ring,
-            (cache.k_ring.stride(0), cache.k_ring.stride(1), cache.k_ring.stride(2)),
-            spec.ring_size,
-            slots,
-            group_start,
-            meta.block_table.gather(1, block_col).squeeze(1),
-            group_start % cache.block_size,
             cache.quantized_tensors,
-            num_kv_heads=cache.num_kv_heads,
-            head_dim=cache.head_dim,
+            residual_length=spec.residual_length,
             group_size=spec.group_size,
             bits=spec.bits,
-            valid=flush.to(torch.int32),
+            block_size=cache.block_size,
         )
-        # 2) The new token enters the ring at its position modulo ring size.
-        ring_pos = cached.long() % spec.ring_size
-        cache.k_ring[slots, :, ring_pos] = k.to(cache.k_ring.dtype)
-        cache.v_ring[slots, :, ring_pos] = v.to(cache.v_ring.dtype)
-        # 3) Fused dequantize + split-K attention over prefix and ring.
-        out, _ = decode_attention(
+        # 2) Fused dequantize + split-K attention over prefix and ring.
+        return decode_attention(
             q.contiguous(),
             cache.quantized_tensors,
             cache.k_ring,
@@ -510,7 +503,6 @@ class KiviInferBackend(nn.Module):
             block_size=cache.block_size,
             num_splits=decode_num_splits(q.shape[0], cache.num_kv_heads, q.device),
         )
-        return out
 
 
 _SM_COUNT: dict[int, int] = {}
@@ -554,15 +546,10 @@ def _store_prefill(k: torch.Tensor, v: torch.Tensor, cache: KiviKVCache, plan: _
         store_groups(
             stage_k,
             stage_v,
-            (0, stage_k.stride(1), stage_k.stride(0)),
-            2**31 - 1,
-            torch.zeros_like(plan.group_src),
             plan.group_src,
             plan.group_block,
             plan.group_offset,
             cache.quantized_tensors,
-            num_kv_heads=cache.num_kv_heads,
-            head_dim=cache.head_dim,
             group_size=spec.group_size,
             bits=spec.bits,
         )

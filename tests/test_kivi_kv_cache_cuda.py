@@ -43,13 +43,12 @@ def ref_quantize(x: torch.Tensor, bits: int, dim: int) -> tuple[torch.Tensor, to
 
 
 def ref_pack(codes: torch.Tensor, bits: int) -> torch.Tensor:
-    """Byte j holds channel ``j + i * packed_dim`` at bit offset ``i * bits``."""
+    """Byte j holds channel ``j * (8 // bits) + i`` at bit offset ``i * bits``."""
 
     pack = 8 // bits
-    packed_dim = codes.shape[-1] // pack
-    out = torch.zeros(*codes.shape[:-1], packed_dim, dtype=torch.int32, device=codes.device)
+    out = torch.zeros(*codes.shape[:-1], codes.shape[-1] // pack, dtype=torch.int32, device=codes.device)
     for i in range(pack):
-        out |= codes[..., i * packed_dim : (i + 1) * packed_dim] << (i * bits)
+        out |= codes[..., i::pack] << (i * bits)
     return out.to(torch.uint8)
 
 
@@ -57,7 +56,10 @@ def ref_unpack(packed: torch.Tensor, bits: int) -> torch.Tensor:
     pack = 8 // bits
     mask = (1 << bits) - 1
     data = packed.to(torch.int32)
-    return torch.cat([(data >> (i * bits)) & mask for i in range(pack)], dim=-1)
+    out = torch.empty(*packed.shape[:-1], packed.shape[-1] * pack, dtype=torch.int32, device=packed.device)
+    for i in range(pack):
+        out[..., i::pack] = (data >> (i * bits)) & mask
+    return out
 
 
 def stored_rows(cache: KiviKVCache, block_row: torch.Tensor, positions: torch.Tensor) -> dict[str, torch.Tensor]:

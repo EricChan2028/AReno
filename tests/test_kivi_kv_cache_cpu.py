@@ -93,14 +93,13 @@ def test_prefill_plan_without_prefix_reads_fresh_tokens_directly():
 
 
 @pytest.mark.parametrize("bits", [2, 4])
-def test_unpack_codes_inverts_strided_packing(bits):
+def test_unpack_codes_inverts_interleaved_packing(bits):
     generator = torch.Generator().manual_seed(bits)
     codes = torch.randint(0, 1 << bits, (3, 5, 128), generator=generator)
     pack = 8 // bits
-    width = 128 // pack
-    packed = torch.zeros(3, 5, width, dtype=torch.int32)
+    packed = torch.zeros(3, 5, 128 // pack, dtype=torch.int32)
     for i in range(pack):
-        packed |= codes[..., i * width : (i + 1) * width] << (i * bits)
+        packed |= codes[..., i::pack] << (i * bits)
     assert torch.equal(unpack_codes(packed.to(torch.uint8), bits), codes.float())
 
 

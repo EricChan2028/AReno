@@ -67,8 +67,6 @@ def bench_one(args, dtype: str, rows: int, context: int) -> dict:
     # Every iteration decodes at the same cached length so steps are comparable.
     seqlens = torch.full((rows,), context, device=device, dtype=torch.int32)
     torch.cuda.empty_cache()
-    torch.cuda.reset_peak_memory_stats()
-    base = torch.cuda.memory_allocated()
     if dtype == "bf16":
         shape = (rows * blocks_per_row, BLOCK_SIZE, args.kv_heads, args.head_dim)
         k_cache = torch.randn(shape, device=device, dtype=torch.bfloat16)
@@ -110,8 +108,13 @@ def bench_one(args, dtype: str, rows: int, context: int) -> dict:
         def step():
             return backend(q, k, v, cache, meta)
 
+    # Setup temporaries are gone; measure only what the step itself adds.
+    torch.cuda.synchronize()
+    torch.cuda.empty_cache()
+    torch.cuda.reset_peak_memory_stats()
+    base = torch.cuda.memory_allocated()
     times = _time(step, args.warmup, args.iters)
-    peak = torch.cuda.max_memory_allocated() - base
+    workspace = torch.cuda.max_memory_allocated() - base
     tokens_read = rows * (context + 1)
     return {
         "dtype": dtype,
@@ -121,7 +124,8 @@ def bench_one(args, dtype: str, rows: int, context: int) -> dict:
         "p10_ms": sorted(times)[len(times) // 10],
         "p90_ms": sorted(times)[(9 * len(times)) // 10],
         "cache_bytes": cache_bytes,
-        "peak_bytes_incl_workspace": peak,
+        "step_workspace_bytes": workspace,
+        "total_bytes": cache_bytes + workspace,
         "kv_tokens_per_ms": tokens_read / statistics.median(times),
     }
 
