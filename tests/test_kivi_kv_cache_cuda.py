@@ -290,15 +290,39 @@ def test_decode_crosses_residual_boundaries_and_matches_reference(bits, total):
         assert_state_matches_reference(cache, seq)
 
 
+def dense_tail_attention(backend: str, q, k, v, query_start: int, scale: float) -> torch.Tensor:
+    """The unmodified dense kernel the prefill path delegates to, on caller-built K/V."""
+
+    if backend == "native":
+        from areno.accel.attention import areno_causal_attention
+
+        repeat = q.shape[1] // k.shape[1]
+        out = areno_causal_attention(
+            q.transpose(0, 1).unsqueeze(0),
+            k.repeat_interleave(repeat, dim=1).transpose(0, 1).unsqueeze(0),
+            v.repeat_interleave(repeat, dim=1).transpose(0, 1).unsqueeze(0),
+            query_start=query_start,
+            softmax_scale=scale,
+            force_native=True,
+        )
+        return out.squeeze(0).transpose(0, 1)
+    from flash_attn import flash_attn_varlen_func
+
+    cu_q = torch.tensor([0, len(q)], dtype=torch.int32, device="cuda")
+    cu_k = torch.tensor([0, len(k)], dtype=torch.int32, device="cuda")
+    return flash_attn_varlen_func(q, k, v, cu_q, cu_k, len(q), len(k), causal=True, softmax_scale=scale)
+
+
+@pytest.mark.parametrize("backend", ["flash", "native"])
 @pytest.mark.parametrize("bits", [2, 4])
 @torch.inference_mode()
-def test_chunked_prefill_reads_quantized_prefix(bits):
+def test_chunked_prefill_reads_quantized_prefix(backend, bits):
     generator = torch.Generator().manual_seed(7 + bits)
     spec = KiviSpec(bits=bits, group_size=32, residual_length=128)
     chunks = [700, 333, 1]  # second chunk straddles ring residue and new groups
     cache = make_cache(spec, num_blocks=8, num_slots=2, num_kv_heads=8)
     seq = Sequence(8, slot=1, block_row=make_block_table(1, 8, generator)[0])
-    backend = KiviInferBackend("flash")
+    kivi = KiviInferBackend(backend)
     scale = HEAD_DIM**-0.5
     for index, length in enumerate(chunks):
         q = random_kv(length, 16, generator)
@@ -307,11 +331,18 @@ def test_chunked_prefill_reads_quantized_prefix(bits):
         old = len(seq.k)
         quantized = ref_quantized_length(old, spec.residual_length, spec.group_size)
         k_prefix, v_prefix = ref_dequant_stored(cache, seq.block_row, quantized)
-        keys = torch.cat([k_prefix, seq.k[quantized:].float(), k.float()])
-        values = torch.cat([v_prefix, seq.v[quantized:].float(), v.float()])
-        out = prefill(backend, cache, [seq], [q], [k], [v], chunked=index > 0)
-        want = ref_tail_attention(q, keys, values, old, scale)
-        torch.testing.assert_close(out.float(), want, atol=1e-2, rtol=1e-2)
+        # Semantics: the chunk sees the dequantized prefix, the full-precision
+        # ring residue and its own fresh tokens, materialized in the model dtype.
+        keys = torch.cat([k_prefix.to(k.dtype), seq.k[quantized:], k])
+        values = torch.cat([v_prefix.to(v.dtype), seq.v[quantized:], v])
+        out = prefill(kivi, cache, [seq], [q], [k], [v], chunked=index > 0)
+        # Same dense kernel on independently built inputs: bitwise equal.
+        assert torch.equal(out, dense_tail_attention(backend, q, keys, values, old, scale))
+        if backend == "flash":
+            # The dense kernel's own bf16 error versus fp32 is the baseline's.
+            want = ref_tail_attention(q, keys.float(), values.float(), old, scale)
+            error = (out.float() - want).abs().max() / want.abs().max()
+            assert error < 1e-2
         assert_state_matches_reference(cache, seq)
 
 
