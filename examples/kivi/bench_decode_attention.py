@@ -161,7 +161,12 @@ def main() -> None:
     if args.output:
         with open(args.output, "w") as handle:
             json.dump(
-                {"device": torch.cuda.get_device_name(), "torch": torch.__version__, "args": vars(args), "results": results},
+                {
+                    "device": torch.cuda.get_device_name(),
+                    "torch": torch.__version__,
+                    "args": vars(args),
+                    "results": results,
+                },
                 handle,
                 indent=2,
             )

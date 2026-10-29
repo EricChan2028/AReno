@@ -126,7 +126,9 @@ class KiviKVCache:
     def nbytes(self) -> int:
         """Total device bytes, including scale/zero metadata and the residual rings."""
 
-        return sum(tensor.numel() * tensor.element_size() for tensor in (*self.quantized_tensors, self.k_ring, self.v_ring))
+        return sum(
+            tensor.numel() * tensor.element_size() for tensor in (*self.quantized_tensors, self.k_ring, self.v_ring)
+        )
 
 
 def validate_kivi_geometry(spec: KiviSpec, *, block_size: int, head_dim: int) -> None:

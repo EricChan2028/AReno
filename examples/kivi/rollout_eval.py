@@ -111,7 +111,10 @@ def main() -> None:
             record = dataset[index]
             reward = reward_fn(
                 make_reward_record(
-                    prompt=record["prompt"], completion=completion, source_record=dict(record), answer=record["solutions"]
+                    prompt=record["prompt"],
+                    completion=completion,
+                    source_record=dict(record),
+                    answer=record["solutions"],
                 )
             )
             rewards.append(reward)
@@ -134,10 +137,7 @@ def main() -> None:
         "seed": args.seed,
         "accuracy": sum(rewards) / max(1, len(rewards)),
         # Binomial standard error of the mean reward over all completions.
-        "accuracy_stderr": (
-            (sum(rewards) / len(rewards)) * (1 - sum(rewards) / len(rewards)) / len(rewards)
-        )
-        ** 0.5
+        "accuracy_stderr": ((sum(rewards) / len(rewards)) * (1 - sum(rewards) / len(rewards)) / len(rewards)) ** 0.5
         if rewards
         else None,
         "generated_tokens": generated,

@@ -106,7 +106,9 @@ def ref_attention(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, scale: floa
 def ref_tail_attention(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, query_start: int, scale: float):
     """Causal attention for queries at positions query_start + i over keys [0, len(k))."""
 
-    outs = [ref_attention(q[i : i + 1], k[: query_start + i + 1], v[: query_start + i + 1], scale) for i in range(len(q))]
+    outs = [
+        ref_attention(q[i : i + 1], k[: query_start + i + 1], v[: query_start + i + 1], scale) for i in range(len(q))
+    ]
     return torch.cat(outs)
 
 
@@ -202,8 +204,12 @@ def assert_state_matches_reference(cache: KiviKVCache, seq: Sequence) -> None:
         v_codes, v_scale, v_zero = ref_quantize(v_groups, spec.bits, dim=3)
         # Metadata is computed with identical fp32 ops; allow one fp16 ulp for
         # division lowering differences between Triton and PyTorch.
-        torch.testing.assert_close(stored["k_zero"].float(), k_zero.repeat_interleave(group, dim=0).float(), atol=0, rtol=0)
-        torch.testing.assert_close(stored["k_scale"].float(), k_scale.repeat_interleave(group, dim=0).float(), atol=0, rtol=1e-3)
+        torch.testing.assert_close(
+            stored["k_zero"].float(), k_zero.repeat_interleave(group, dim=0).float(), atol=0, rtol=0
+        )
+        torch.testing.assert_close(
+            stored["k_scale"].float(), k_scale.repeat_interleave(group, dim=0).float(), atol=0, rtol=1e-3
+        )
         torch.testing.assert_close(stored["v_zero"].float(), v_zero.float(), atol=0, rtol=0)
         torch.testing.assert_close(stored["v_scale"].float(), v_scale.float(), atol=0, rtol=1e-3)
         got_k = ref_unpack(stored["k_codes"], spec.bits)
@@ -382,7 +388,15 @@ def test_slot_and_block_reuse_does_not_leak_previous_sequence():
     table = make_block_table(1, 4, generator)
     # Sequence A fills slot 1 and the blocks, then B reuses both from scratch.
     a = Sequence(8, slot=1, block_row=table[0])
-    prefill(backend, shared, [a], [random_kv(600, 16, generator)], [random_kv(600, 8, generator)], [random_kv(600, 8, generator)], chunked=False)
+    prefill(
+        backend,
+        shared,
+        [a],
+        [random_kv(600, 16, generator)],
+        [random_kv(600, 8, generator)],
+        [random_kv(600, 8, generator)],
+        chunked=False,
+    )
     b_inputs = [random_kv(300, 16, generator), random_kv(300, 8, generator), random_kv(300, 8, generator)]
     b_steps = [(random_kv(1, 16, generator), random_kv(1, 8, generator), random_kv(1, 8, generator)) for _ in range(40)]
 
@@ -408,7 +422,9 @@ def test_decode_cuda_graph_replay_matches_eager():
     k_rows = [random_kv(n, 8, generator) for n in lengths]
     v_rows = [random_kv(n, 8, generator) for n in lengths]
     q_rows = [random_kv(n, 16, generator) for n in lengths]
-    steps = [(random_kv(rows, 16, generator), random_kv(rows, 8, generator), random_kv(rows, 8, generator)) for _ in range(3)]
+    steps = [
+        (random_kv(rows, 16, generator), random_kv(rows, 8, generator), random_kv(rows, 8, generator)) for _ in range(3)
+    ]
 
     def setup():
         cache = make_cache(spec, num_blocks=rows * blocks_per_row, num_slots=rows, num_kv_heads=8)

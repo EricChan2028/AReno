@@ -47,9 +47,7 @@ def main() -> None:
 
     runtime_overrides = {"kv_cache_dtype": args.kv_cache_dtype}
     if args.kv_cache_dtype != "auto":
-        runtime_overrides.update(
-            kivi_group_size=args.kivi_group_size, kivi_residual_length=args.kivi_residual_length
-        )
+        runtime_overrides.update(kivi_group_size=args.kivi_group_size, kivi_residual_length=args.kivi_residual_length)
 
     cuda_config = TrainerConfig.cuda_config
 

@@ -427,15 +427,22 @@ def _kivi_decode_kernel(
         k_base = K_CODES + block * stride_kc_block + kv_head * stride_kc_head + first * stride_kc_tok
         ks_base = block * stride_ks_block + kv_head * stride_ks_head + (first // GROUP) * stride_ks_group
         k = _unpack(tl.load(k_base + tile_rows * stride_kc_tok + packed[None, :]), BLOCK_N, HEAD_DIM, BITS)
-        k = k * tl.load(K_SCALE + ks_base + dim).to(tl.float32)[None, :] + tl.load(K_ZERO + ks_base + dim).to(tl.float32)[None, :]
+        k = (
+            k * tl.load(K_SCALE + ks_base + dim).to(tl.float32)[None, :]
+            + tl.load(K_ZERO + ks_base + dim).to(tl.float32)[None, :]
+        )
         v_base = V_CODES + block * stride_vc_block + kv_head * stride_vc_head + first * stride_vc_tok
         vs_base = block * stride_vs_block + kv_head * stride_vs_head + first * stride_vs_tok
         vs_offsets = tile_rows * stride_vs_tok + vgroup[None, :]
         v_scale = tl.load(V_SCALE + vs_base + vs_offsets).to(tl.float32)
         v_zero = tl.load(V_ZERO + vs_base + vs_offsets).to(tl.float32)
         # Broadcast the per-(token, channel-group) metadata over each group.
-        v_scale = tl.reshape(tl.broadcast_to(v_scale[:, :, None], (BLOCK_N, HEAD_DIM // GROUP, GROUP)), (BLOCK_N, HEAD_DIM))
-        v_zero = tl.reshape(tl.broadcast_to(v_zero[:, :, None], (BLOCK_N, HEAD_DIM // GROUP, GROUP)), (BLOCK_N, HEAD_DIM))
+        v_scale = tl.reshape(
+            tl.broadcast_to(v_scale[:, :, None], (BLOCK_N, HEAD_DIM // GROUP, GROUP)), (BLOCK_N, HEAD_DIM)
+        )
+        v_zero = tl.reshape(
+            tl.broadcast_to(v_zero[:, :, None], (BLOCK_N, HEAD_DIM // GROUP, GROUP)), (BLOCK_N, HEAD_DIM)
+        )
         v = _unpack(tl.load(v_base + tile_rows * stride_vc_tok + packed[None, :]), BLOCK_N, HEAD_DIM, BITS)
         m_i, l_i, acc = _attend(q, k, v * v_scale + v_zero, all_valid, m_i, l_i, acc, qk_scale)
 
