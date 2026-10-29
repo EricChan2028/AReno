@@ -62,12 +62,15 @@ def _pack(codes, ROWS: tl.constexpr, HEAD_DIM: tl.constexpr, BITS: tl.constexpr)
 def _unpack(packed, ROWS: tl.constexpr, HEAD_DIM: tl.constexpr, BITS: tl.constexpr):
     # Inverse of `_pack`: (ROWS, packed_dim) uint8 -> (ROWS, HEAD_DIM) fp32 codes.
     # Joining the shifted fields adds trailing axes held by the same thread, so
-    # the reshape back to channel order needs no data movement.
+    # the reshape back to channel order needs no data movement. `tl.join`
+    # appends its new axis last, so the outer join pairs fields (0, 2) with
+    # (1, 3): element [j, a, b] holds field 2 * a + b, which the reshape places
+    # at channel 4 * j + 2 * a + b.
     x = packed.to(tl.int32)
     if BITS == 4:
         fields = tl.join(x & 15, x >> 4)
     else:
-        fields = tl.join(tl.join(x & 3, (x >> 2) & 3), tl.join((x >> 4) & 3, x >> 6))
+        fields = tl.join(tl.join(x & 3, (x >> 4) & 3), tl.join((x >> 2) & 3, x >> 6))
     return tl.reshape(fields, (ROWS, HEAD_DIM)).to(tl.float32)
 
 

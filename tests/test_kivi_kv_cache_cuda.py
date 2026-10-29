@@ -237,6 +237,31 @@ def reference_decode(cache: KiviKVCache, seq: Sequence, q: torch.Tensor, scale: 
 
 
 @pytest.mark.parametrize("bits", [2, 4])
+def test_triton_pack_and_unpack_match_reference_layout(bits):
+    import triton
+    import triton.language as tl
+
+    from areno.accel.kernels.kivi import _pack, _unpack
+
+    @triton.jit
+    def roundtrip(CODES, PACKED, UNPACKED, ROWS: tl.constexpr, DIM: tl.constexpr, BITS: tl.constexpr):
+        rows = tl.arange(0, ROWS)[:, None]
+        byte = tl.arange(0, DIM * BITS // 8)[None, :]
+        dim = tl.arange(0, DIM)[None, :]
+        tl.store(PACKED + rows * (DIM * BITS // 8) + byte, _pack(tl.load(CODES + rows * DIM + dim), ROWS, DIM, BITS))
+        packed = tl.load(PACKED + rows * (DIM * BITS // 8) + byte)
+        tl.store(UNPACKED + rows * DIM + dim, _unpack(packed, ROWS, DIM, BITS))
+
+    generator = torch.Generator().manual_seed(bits)
+    codes = torch.randint(0, 1 << bits, (64, HEAD_DIM), generator=generator, dtype=torch.int32).cuda()
+    packed = torch.empty(64, HEAD_DIM * bits // 8, dtype=torch.uint8, device="cuda")
+    unpacked = torch.empty(64, HEAD_DIM, dtype=torch.float32, device="cuda")
+    roundtrip[(1,)](codes, packed, unpacked, 64, HEAD_DIM, bits)
+    assert torch.equal(packed, ref_pack(codes, bits))
+    assert torch.equal(unpacked, codes.float())
+
+
+@pytest.mark.parametrize("bits", [2, 4])
 @pytest.mark.parametrize("group_size", [32, 64, 128])
 @torch.inference_mode()
 def test_prefill_store_matches_reference_quantizer(bits, group_size):
