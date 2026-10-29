@@ -305,6 +305,28 @@ def _kivi_append_kernel(
 
 
 @triton.jit
+def _attend(q, k, v, valid, m_i, l_i, acc, qk_scale):
+    # One online-softmax update of (m_i, l_i, acc) with a (BLOCK_N, HEAD_DIM)
+    # fp32 K/V tile. K, V and P are split into high and low halves in the
+    # query dtype so tensor-core dots reproduce fp32 products closely (the
+    # dropped lo x lo terms are below fp32 rounding of the accumulator).
+    k_hi = k.to(q.dtype)
+    k_lo = (k - k_hi.to(tl.float32)).to(q.dtype)
+    scores = (tl.dot(q, tl.trans(k_hi)) + tl.dot(q, tl.trans(k_lo))) * qk_scale
+    scores = tl.where(valid[None, :], scores, float("-inf"))
+    m_new = tl.maximum(m_i, tl.max(scores, axis=1))
+    alpha = tl.exp2(m_i - m_new)
+    p = tl.exp2(scores - m_new[:, None])
+    l_i = l_i * alpha + tl.sum(p, axis=1)
+    v_hi = v.to(q.dtype)
+    v_lo = (v - v_hi.to(tl.float32)).to(q.dtype)
+    p_hi = p.to(q.dtype)
+    p_lo = (p - p_hi.to(tl.float32)).to(q.dtype)
+    acc = acc * alpha[:, None] + tl.dot(p_hi, v_hi) + tl.dot(p_lo, v_hi) + tl.dot(p_hi, v_lo)
+    return m_new, l_i, acc
+
+
+@triton.jit
 def _kivi_decode_kernel(
     Q,
     K_CODES,
@@ -385,6 +407,7 @@ def _kivi_decode_kernel(
     dim = tl.arange(0, HEAD_DIM)
     tok = tl.arange(0, BLOCK_N)
     packed = tl.arange(0, HEAD_DIM * BITS // 8)
+    vgroup = tl.arange(0, HEAD_DIM // GROUP)
     q = tl.load(
         Q + row * stride_q_row + q_heads[:, None] * stride_q_head + dim[None, :],
         mask=head_mask[:, None],
@@ -395,48 +418,38 @@ def _kivi_decode_kernel(
     m_i = tl.full([HEADS_PAD], float("-inf"), tl.float32)
     l_i = tl.zeros([HEADS_PAD], tl.float32)
     acc = tl.zeros([HEADS_PAD, HEAD_DIM], tl.float32)
-    for tile in range(tile_begin, tile_end):
-        if tile < quant_tiles:
-            # BLOCK_N divides GROUP: the tile shares one key scale row and never
-            # straddles a paged block.
-            start = tile * BLOCK_N
-            block = tl.load(BLOCK_TABLE + row * stride_bt_row + start // BLOCK_SIZE).to(tl.int64)
-            offsets = start % BLOCK_SIZE + tok
-            kc = block * stride_kc_block + kv_head * stride_kc_head + offsets[:, None] * stride_kc_tok + packed[None, :]
-            ks = block * stride_ks_block + kv_head * stride_ks_head + ((start % BLOCK_SIZE) // GROUP) * stride_ks_group
-            k = _unpack(tl.load(K_CODES + kc), BLOCK_N, HEAD_DIM, BITS)
-            k = k * tl.load(K_SCALE + ks + dim).to(tl.float32)[None, :] + tl.load(K_ZERO + ks + dim).to(tl.float32)[None, :]
-            vc = block * stride_vc_block + kv_head * stride_vc_head + offsets[:, None] * stride_vc_tok + packed[None, :]
-            vs = block * stride_vs_block + kv_head * stride_vs_head + offsets[:, None] * stride_vs_tok + (dim // GROUP)[None, :]
-            v = _unpack(tl.load(V_CODES + vc), BLOCK_N, HEAD_DIM, BITS)
-            v = v * tl.load(V_SCALE + vs).to(tl.float32) + tl.load(V_ZERO + vs).to(tl.float32)
-            valid = tok < BLOCK_N
-        else:
-            positions = quantized + (tile - quant_tiles) * BLOCK_N + tok
-            valid = positions < total
-            ring = (positions % ring_size)[:, None] * stride_ring_pos + dim[None, :]
-            k = tl.load(ring_k + ring, mask=valid[:, None], other=0.0).to(tl.float32)
-            v = tl.load(ring_v + ring, mask=valid[:, None], other=0.0).to(tl.float32)
-        # Split the fp32 keys into high and low halves in the query dtype so
-        # two tensor-core dots reproduce the fp32 dot product closely.
-        k_hi = k.to(q.dtype)
-        k_lo = (k - k_hi.to(tl.float32)).to(q.dtype)
-        scores = (tl.dot(q, tl.trans(k_hi)) + tl.dot(q, tl.trans(k_lo))) * qk_scale
-        scores = tl.where(valid[None, :], scores, float("-inf"))
+    # Whole quantized tiles: per-block base pointers are 64-bit scalars and the
+    # per-element offsets stay 32-bit. BLOCK_N divides GROUP, so a tile shares
+    # one key scale row and never straddles a paged block.
+    tile_rows = tok[:, None]
+    all_valid = tok < BLOCK_N
+    for tile in range(tile_begin, tl.minimum(tile_end, quant_tiles)):
+        start = tile * BLOCK_N
+        block = tl.load(BLOCK_TABLE + row * stride_bt_row + start // BLOCK_SIZE).to(tl.int64)
+        first = start % BLOCK_SIZE
+        k_base = K_CODES + block * stride_kc_block + kv_head * stride_kc_head + first * stride_kc_tok
+        ks_base = block * stride_ks_block + kv_head * stride_ks_head + (first // GROUP) * stride_ks_group
+        k = _unpack(tl.load(k_base + tile_rows * stride_kc_tok + packed[None, :]), BLOCK_N, HEAD_DIM, BITS)
+        k = k * tl.load(K_SCALE + ks_base + dim).to(tl.float32)[None, :] + tl.load(K_ZERO + ks_base + dim).to(tl.float32)[None, :]
+        v_base = V_CODES + block * stride_vc_block + kv_head * stride_vc_head + first * stride_vc_tok
+        vs_base = block * stride_vs_block + kv_head * stride_vs_head + first * stride_vs_tok
+        vs_offsets = tile_rows * stride_vs_tok + vgroup[None, :]
+        v_scale = tl.load(V_SCALE + vs_base + vs_offsets).to(tl.float32)
+        v_zero = tl.load(V_ZERO + vs_base + vs_offsets).to(tl.float32)
+        # Broadcast the per-(token, channel-group) metadata over each group.
+        v_scale = tl.reshape(tl.broadcast_to(v_scale[:, :, None], (BLOCK_N, HEAD_DIM // GROUP, GROUP)), (BLOCK_N, HEAD_DIM))
+        v_zero = tl.reshape(tl.broadcast_to(v_zero[:, :, None], (BLOCK_N, HEAD_DIM // GROUP, GROUP)), (BLOCK_N, HEAD_DIM))
+        v = _unpack(tl.load(v_base + tile_rows * stride_vc_tok + packed[None, :]), BLOCK_N, HEAD_DIM, BITS)
+        m_i, l_i, acc = _attend(q, k, v * v_scale + v_zero, all_valid, m_i, l_i, acc, qk_scale)
 
-        # Online softmax in base 2 (qk_scale already folds in log2(e)).
-        m_new = tl.maximum(m_i, tl.max(scores, axis=1))
-        alpha = tl.exp2(m_i - m_new)
-        p = tl.exp2(scores - m_new[:, None])
-        l_i = l_i * alpha + tl.sum(p, axis=1)
-        # Same split for the probabilities and values; the dropped lo x lo
-        # term is below fp32 rounding of the accumulator.
-        v_hi = v.to(q.dtype)
-        v_lo = (v - v_hi.to(tl.float32)).to(q.dtype)
-        p_hi = p.to(q.dtype)
-        p_lo = (p - p_hi.to(tl.float32)).to(q.dtype)
-        acc = acc * alpha[:, None] + tl.dot(p_hi, v_hi) + tl.dot(p_lo, v_hi) + tl.dot(p_hi, v_lo)
-        m_i = m_new
+    # Residual tiles from the ring, masked past the newest token.
+    for tile in range(tl.maximum(tile_begin, quant_tiles), tile_end):
+        positions = quantized + (tile - quant_tiles) * BLOCK_N + tok
+        valid = positions < total
+        ring = (positions % ring_size)[:, None] * stride_ring_pos + dim[None, :]
+        k = tl.load(ring_k + ring, mask=valid[:, None], other=0.0).to(tl.float32)
+        v = tl.load(ring_v + ring, mask=valid[:, None], other=0.0).to(tl.float32)
+        m_i, l_i, acc = _attend(q, k, v, valid, m_i, l_i, acc, qk_scale)
 
     if NUM_SPLITS == 1:
         out = OUT + row * stride_o_row + q_heads[:, None] * stride_o_head + dim[None, :]
