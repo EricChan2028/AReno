@@ -428,10 +428,13 @@ def _kivi_decode_kernel(
         alpha = tl.exp2(m_i - m_new)
         p = tl.exp2(scores - m_new[:, None])
         l_i = l_i * alpha + tl.sum(p, axis=1)
+        # Same split for the probabilities and values; the dropped lo x lo
+        # term is below fp32 rounding of the accumulator.
         v_hi = v.to(q.dtype)
         v_lo = (v - v_hi.to(tl.float32)).to(q.dtype)
-        p_lp = p.to(q.dtype)
-        acc = acc * alpha[:, None] + tl.dot(p_lp, v_hi) + tl.dot(p_lp, v_lo)
+        p_hi = p.to(q.dtype)
+        p_lo = (p - p_hi.to(tl.float32)).to(q.dtype)
+        acc = acc * alpha[:, None] + tl.dot(p_hi, v_hi) + tl.dot(p_lo, v_hi) + tl.dot(p_hi, v_lo)
         m_i = m_new
 
     if NUM_SPLITS == 1:
