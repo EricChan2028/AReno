@@ -307,22 +307,19 @@ def _kivi_append_kernel(
 @triton.jit
 def _attend(q, k, v, valid, m_i, l_i, acc, qk_scale):
     # One online-softmax update of (m_i, l_i, acc) with a (BLOCK_N, HEAD_DIM)
-    # fp32 K/V tile. K, V and P are split into high and low halves in the
-    # query dtype so tensor-core dots reproduce fp32 products closely (the
-    # dropped lo x lo terms are below fp32 rounding of the accumulator).
-    k_hi = k.to(q.dtype)
-    k_lo = (k - k_hi.to(tl.float32)).to(q.dtype)
+    # fp32 K/V tile; `q` is fp16. Dots run on fp16 tensor cores (10 mantissa
+    # bits; dequantized K/V and probabilities are well inside its range). Keys
+    # are split into high and low fp16 halves so the scores stay close to fp32;
+    # P @ V needs a single fp16 dot for the same tolerance.
+    k_hi = k.to(tl.float16)
+    k_lo = (k - k_hi.to(tl.float32)).to(tl.float16)
     scores = (tl.dot(q, tl.trans(k_hi)) + tl.dot(q, tl.trans(k_lo))) * qk_scale
     scores = tl.where(valid[None, :], scores, float("-inf"))
     m_new = tl.maximum(m_i, tl.max(scores, axis=1))
     alpha = tl.exp2(m_i - m_new)
     p = tl.exp2(scores - m_new[:, None])
     l_i = l_i * alpha + tl.sum(p, axis=1)
-    v_hi = v.to(q.dtype)
-    v_lo = (v - v_hi.to(tl.float32)).to(q.dtype)
-    p_hi = p.to(q.dtype)
-    p_lo = (p - p_hi.to(tl.float32)).to(q.dtype)
-    acc = acc * alpha[:, None] + tl.dot(p_hi, v_hi) + tl.dot(p_lo, v_hi) + tl.dot(p_hi, v_lo)
+    acc = acc * alpha[:, None] + tl.dot(p.to(tl.float16), v.to(tl.float16))
     return m_new, l_i, acc
 
 
@@ -412,7 +409,7 @@ def _kivi_decode_kernel(
         Q + row * stride_q_row + q_heads[:, None] * stride_q_head + dim[None, :],
         mask=head_mask[:, None],
         other=0.0,
-    )
+    ).to(tl.float16)
     ring_k = K_RING + slot * stride_ring_slot + kv_head * stride_ring_head
     ring_v = V_RING + slot * stride_ring_slot + kv_head * stride_ring_head
     m_i = tl.full([HEADS_PAD], float("-inf"), tl.float32)
