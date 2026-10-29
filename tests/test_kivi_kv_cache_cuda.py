@@ -467,6 +467,36 @@ def test_decode_cuda_graph_replay_matches_eager():
         torch.testing.assert_close(static_out.squeeze(1), eager[index], atol=0, rtol=0)
 
 
+def test_clear_releases_kivi_storage_attached_to_attention_layers():
+    import gc
+    from types import SimpleNamespace
+
+    from areno.engine.config import ModelConfig
+    from areno.engine.layers.attention import CausalSelfAttention
+    from areno.engine.layers.attention_backend.kivi import attach_kivi_kv_caches
+
+    config = ModelConfig(hidden_size=512, num_attention_heads=4, num_key_value_heads=2, head_dim=128)
+    model = SimpleNamespace(
+        layers=[SimpleNamespace(self_attn=CausalSelfAttention(config, index).cuda()) for index in range(3)]
+    )
+    spec = KiviSpec(bits=2, group_size=32, residual_length=128)
+    torch.cuda.synchronize()
+    baseline = torch.cuda.memory_allocated()
+    caches = attach_kivi_kv_caches(
+        model, spec, num_blocks=16, block_size=BLOCK_SIZE, num_slots=5, device=torch.device("cuda"), dtype=torch.bfloat16
+    )
+    attached = torch.cuda.memory_allocated() - baseline
+    expected = sum(cache.nbytes() for cache in caches)
+    # The caching allocator rounds each tensor up to 512 bytes.
+    assert expected <= attached <= expected + 512 * 10 * len(caches)
+    assert all(layer.self_attn.kivi_cache is cache for layer, cache in zip(model.layers, caches, strict=True))
+    del caches
+    for layer in model.layers:
+        layer.self_attn.clear_kv_cache()
+    gc.collect()
+    assert torch.cuda.memory_allocated() == baseline
+
+
 @pytest.mark.parametrize("bits,max_ratio", [(2, 0.25), (4, 0.375)])
 def test_long_context_cache_bytes_below_bf16(bits, max_ratio):
     spec = KiviSpec(bits=bits, group_size=32, residual_length=128)

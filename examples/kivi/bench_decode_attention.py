@@ -127,7 +127,7 @@ def bench_one(args, dtype: str, rows: int, context: int) -> dict:
         times = _time(graph.replay, args.warmup, args.iters)
     else:
         times = _time(step, args.warmup, args.iters)
-    workspace = torch.cuda.max_memory_allocated() - base
+    peak_allocated = torch.cuda.max_memory_allocated()
     tokens_read = rows * (context + 1)
     return {
         "dtype": dtype,
@@ -137,8 +137,11 @@ def bench_one(args, dtype: str, rows: int, context: int) -> dict:
         "p10_ms": sorted(times)[len(times) // 10],
         "p90_ms": sorted(times)[(9 * len(times)) // 10],
         "cache_bytes": cache_bytes,
-        "step_workspace_bytes": workspace,
-        "total_bytes": cache_bytes + workspace,
+        "step_workspace_bytes": peak_allocated - base,
+        "total_bytes": cache_bytes + peak_allocated - base,
+        # Process-wide allocator peaks while stepping (cache, inputs, workspace).
+        "peak_allocated_bytes": peak_allocated,
+        "peak_reserved_bytes": torch.cuda.max_memory_reserved(),
         "kv_tokens_per_ms": tokens_read / statistics.median(times),
     }
 
