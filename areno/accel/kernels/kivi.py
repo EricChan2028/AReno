@@ -664,6 +664,9 @@ def decode_attention(
         BLOCK_N=block_n,
         NUM_SPLITS=num_splits,
         num_warps=4,
+        # Deeper software pipelining buffers several dequantization tiles in
+        # shared memory and exceeds the ~100 KiB per-block limit of sm_120.
+        num_stages=1,
     )
     if num_splits > 1:
         _kivi_combine_kernel[(rows, query_heads)](
