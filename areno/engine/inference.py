@@ -277,7 +277,7 @@ class InferenceManager:
 
             # KIVI keeps the paged block budget and adds one residual ring per
             # rollout slot, including the scratch slot used by padded graph rows.
-            attach_kivi_kv_caches(
+            kivi_caches = attach_kivi_kv_caches(
                 self.model,
                 KiviSpec(
                     bits=KIVI_BITS[runtime.kv_cache_dtype],
@@ -289,6 +289,15 @@ class InferenceManager:
                 num_slots=max_running_seqs + 1,
                 device=self.device,
                 dtype=self.config.model.dtype,
+            )
+            logger.info(
+                "KIVI KV cache: dtype=%s group_size=%d residual_length=%d blocks=%d slots=%d bytes=%d",
+                runtime.kv_cache_dtype,
+                runtime.kivi_group_size,
+                runtime.kivi_residual_length,
+                self._infer_cache_blocks,
+                max_running_seqs + 1,
+                sum(cache.nbytes() for cache in kivi_caches),
             )
         self._train_state_ready = False
         # Materialise infer weights from train weights (e.g. dequantize / fuse),

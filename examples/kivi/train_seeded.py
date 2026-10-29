@@ -42,21 +42,25 @@ def main() -> None:
     args, train_args = parse_args()
 
     import areno.cli.train as train_cli
-    from areno.api.trainer_config import TrainerConfig
+    from areno.api.trainer_config import RolloutTrainerConfig, TrainerConfig
     from areno.api.trainers.policy_only import PolicyOnlyTrainer
 
     runtime_overrides = {"kv_cache_dtype": args.kv_cache_dtype}
     if args.kv_cache_dtype != "auto":
         runtime_overrides.update(kivi_group_size=args.kivi_group_size, kivi_residual_length=args.kivi_residual_length)
 
-    cuda_config = TrainerConfig.cuda_config
+    def with_kv_cache(cuda_config):
+        def cuda_config_with_kv_cache(self):
+            config = cuda_config(self)
+            config.runtime.update(runtime_overrides)
+            return config
 
-    def cuda_config_with_kv_cache(self):
-        config = cuda_config(self)
-        config.runtime.update(runtime_overrides)
-        return config
+        return cuda_config_with_kv_cache
 
-    TrainerConfig.cuda_config = cuda_config_with_kv_cache
+    # Rollout trainers (GSPO, GRPO, PPO) define their own cuda_config, so wrap
+    # every definition rather than only the base class one.
+    for config_class in (TrainerConfig, RolloutTrainerConfig):
+        config_class.cuda_config = with_kv_cache(config_class.cuda_config)
 
     run_prompt_rollout = PolicyOnlyTrainer._run_prompt_rollout
 
