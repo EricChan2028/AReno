@@ -30,7 +30,7 @@ import triton
 import triton.language as tl
 
 # Largest finite fp16 value; scales/zeros saturate here instead of overflowing.
-_FP16_MAX = 65504.0
+_FP16_MAX = tl.constexpr(65504.0)
 
 
 @triton.jit
