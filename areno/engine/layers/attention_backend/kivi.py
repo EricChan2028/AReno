@@ -501,26 +501,22 @@ class KiviInferBackend(nn.Module):
             group_size=spec.group_size,
             bits=spec.bits,
             block_size=cache.block_size,
-            num_splits=decode_num_splits(q.shape[0], cache.num_kv_heads, q.device),
+            num_splits=decode_num_splits(q.shape[0], cache.num_kv_heads),
         )
 
 
-_SM_COUNT: dict[int, int] = {}
+def decode_num_splits(rows: int, num_kv_heads: int) -> int:
+    """Power-of-two split count giving about 16K (row, KV head, split) programs.
 
-
-def decode_num_splits(rows: int, num_kv_heads: int, device: torch.device) -> int:
-    """Pick a power-of-two split count that fills the GPU for small decode batches.
-
-    The value depends only on static shapes, so a captured decode graph keeps
-    one kernel specialization.
+    Tuned on RTX PRO 5000 (sm_120) under CUDA graphs: many more programs than
+    SMs keep enough dequantization loads in flight at long context, and the
+    empty splits of short rows exit immediately. It depends only on static
+    shapes, so a captured decode graph keeps one kernel specialization. The
+    split workspace stays near 16K * queries_per_kv * head_dim fp32 values.
     """
 
-    index = device.index if device.index is not None else torch.cuda.current_device()
-    if index not in _SM_COUNT:
-        _SM_COUNT[index] = torch.cuda.get_device_properties(index).multi_processor_count
-    programs = max(1, rows * num_kv_heads)
     splits = 1
-    while splits < 32 and programs * splits < 4 * _SM_COUNT[index]:
+    while splits < 64 and rows * num_kv_heads * splits < 16384:
         splits *= 2
     return splits
 

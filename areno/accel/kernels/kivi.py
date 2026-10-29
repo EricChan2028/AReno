@@ -617,7 +617,7 @@ def decode_attention(
     block_size: int,
     num_splits: int,
     block_n: int = 32,
-    num_warps: int = 4,
+    num_warps: int = 2,
 ) -> torch.Tensor:
     """Single-token decode attention over a KIVI paged cache.
 
