@@ -112,8 +112,8 @@ class RuntimeConfig:
             raise ValueError("runtime.speculative_draft_tokens must be non-negative")
         if self.kv_cache_dtype not in {"auto", "kivi2", "kivi4"}:
             raise ValueError("runtime.kv_cache_dtype must be one of: auto, kivi2, kivi4")
-        if self.kivi_group_size < 16 or self.kivi_group_size & (self.kivi_group_size - 1):
-            raise ValueError("runtime.kivi_group_size must be a power of two >= 16")
+        if self.kivi_group_size < 32 or self.kivi_group_size & (self.kivi_group_size - 1):
+            raise ValueError("runtime.kivi_group_size must be a power of two >= 32")
         if self.kivi_residual_length < 0:
             raise ValueError("runtime.kivi_residual_length must be non-negative")
 

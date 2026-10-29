@@ -108,6 +108,7 @@ def test_unpack_codes_inverts_interleaved_packing(bits):
     [
         (KiviSpec(bits=3, group_size=32, residual_length=128), 256, 128, "2 or 4 bits"),
         (KiviSpec(bits=2, group_size=24, residual_length=128), 256, 128, "power of two"),
+        (KiviSpec(bits=2, group_size=16, residual_length=128), 256, 128, ">= 32"),
         (KiviSpec(bits=2, group_size=32, residual_length=-1), 256, 128, "non-negative"),
         (KiviSpec(bits=2, group_size=32, residual_length=128), 256, 96, "head dim"),
         (KiviSpec(bits=2, group_size=128, residual_length=128), 64, 128, "block size"),
@@ -130,6 +131,7 @@ def test_runtime_config_defaults_to_model_dtype_cache():
         ({"kv_cache_dtype": "int2"}, "kv_cache_dtype"),
         ({"kivi_group_size": 48}, "kivi_group_size"),
         ({"kivi_group_size": 8}, "kivi_group_size"),
+        ({"kivi_group_size": 16}, "kivi_group_size"),
         ({"kivi_residual_length": -1}, "kivi_residual_length"),
     ],
 )

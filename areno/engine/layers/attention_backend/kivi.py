@@ -137,8 +137,8 @@ def validate_kivi_geometry(spec: KiviSpec, *, block_size: int, head_dim: int) ->
     if spec.bits not in KIVI_BITS.values():
         raise ValueError(f"KIVI supports 2 or 4 bits, got {spec.bits}")
     group = spec.group_size
-    if group < 16 or group & (group - 1):
-        raise ValueError(f"KIVI group size must be a power of two >= 16, got {group}")
+    if group < 32 or group & (group - 1):
+        raise ValueError(f"KIVI group size must be a power of two >= 32, got {group}")
     if spec.residual_length < 0:
         raise ValueError(f"KIVI residual length must be non-negative, got {spec.residual_length}")
     if head_dim & (head_dim - 1) or head_dim % group:

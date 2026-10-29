@@ -75,7 +75,7 @@ Engine runtime options (``areno.engine.config.RuntimeConfig``):
    ``"auto"`` (default, model dtype), ``"kivi2"`` or ``"kivi4"``.
 ``kivi_group_size``
    Tokens per key group and channels per value group, a power of two of at
-   least 16. Default 32.
+   least 32. Default 32.
 ``kivi_residual_length``
    Full-precision recent tokens ``R``. Default 128.
 

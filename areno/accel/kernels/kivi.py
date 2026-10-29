@@ -623,7 +623,7 @@ def decode_attention(
     bits: int,
     block_size: int,
     num_splits: int,
-    block_n: int | None = None,
+    block_n: int = 32,
     num_warps: int = 2,
 ) -> torch.Tensor:
     """Single-token decode attention over a KIVI paged cache.
@@ -631,8 +631,8 @@ def decode_attention(
     ``q`` is ``(rows, query_heads, head_dim)``. Each row attends to positions
     ``[0, cache_seqlens[row]]``: the quantized prefix through ``block_table``
     and the residual tail through ``k_ring``/``v_ring[slots[row]]``.
-    ``num_splits`` must be a power of two. ``block_n`` (tokens per tile)
-    defaults to ``min(32, group_size)``.
+    ``num_splits`` must be a power of two; ``block_n`` (tokens per tile) must
+    divide the group size. Tiles narrower than 32 tokens are not supported.
     """
 
     rows, query_heads, head_dim = q.shape
@@ -641,10 +641,8 @@ def decode_attention(
     out = torch.empty_like(q)
     if rows == 0:
         return out
-    if block_n is None:
-        block_n = min(32, group_size)
-    if group_size % block_n or block_n < 16:
-        raise ValueError(f"block_n {block_n} must be >= 16 and divide the KIVI group size {group_size}")
+    if group_size % block_n or block_n < 32:
+        raise ValueError(f"block_n {block_n} must be >= 32 and divide the KIVI group size {group_size}")
     if num_splits > 1:
         part_acc = torch.empty((rows, query_heads, num_splits, head_dim), device=q.device, dtype=torch.float32)
         part_max = torch.empty((rows, query_heads, num_splits), device=q.device, dtype=torch.float32)

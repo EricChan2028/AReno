@@ -268,7 +268,7 @@ def test_triton_pack_and_unpack_match_reference_layout(bits):
 
 
 @pytest.mark.parametrize("bits", [2, 4])
-@pytest.mark.parametrize("group_size", [16, 32, 64, 128])
+@pytest.mark.parametrize("group_size", [32, 64, 128])
 @torch.inference_mode()
 def test_prefill_store_matches_reference_quantizer(bits, group_size):
     generator = torch.Generator().manual_seed(bits * 100 + group_size)
@@ -290,7 +290,7 @@ def test_prefill_store_matches_reference_quantizer(bits, group_size):
 
 @pytest.mark.parametrize(
     "bits,total,group_size",
-    [(bits, total, 32) for bits in (2, 4) for total in (1024, 4096, 8192)] + [(2, 1024, 16), (4, 1024, 64)],
+    [(bits, total, 32) for bits in (2, 4) for total in (1024, 4096, 8192)] + [(2, 1024, 64), (4, 1024, 128)],
 )
 @torch.inference_mode()
 def test_decode_crosses_residual_boundaries_and_matches_reference(bits, total, group_size):
