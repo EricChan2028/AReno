@@ -1,11 +1,13 @@
 KIVI KV cache
 =============
 
-AReno provides an opt-in KIVI KV cache for CUDA rollout and serving. It stores
-the attention keys and values of decoded tokens as asymmetric 2-bit or 4-bit
+AReno provides an opt-in KIVI KV cache for CUDA rollout. It stores the
+attention keys and values of decoded tokens as asymmetric 2-bit or 4-bit
 codes, following `KIVI <https://arxiv.org/abs/2402.02750>`_, while model
 weights, training, and checkpoints are unchanged. The default model-dtype KV
-cache is used unless the option is set.
+cache is used unless the option is set. The option belongs to the engine
+runtime configuration; ``areno train`` and ``areno serve`` do not expose it as
+a command-line flag yet.
 
 Storage representation
 ----------------------
@@ -93,9 +95,12 @@ The CUDA SDK forwards its ``runtime`` dictionary to the engine:
        1,
        "/path/to/Qwen3-0.6B",
        custom_config=CudaConfig(
-           runtime={"kv_cache_dtype": "kivi2", "kivi_group_size": 32, "kivi_residual_length": 128},
+           runtime={"kv_cache_dtype": "kivi4", "kivi_group_size": 32, "kivi_residual_length": 128},
        ),
    )
+
+``examples/kivi/train_seeded.py`` passes the same options to an otherwise
+unchanged ``areno train`` command line.
 
 Supported configurations and fallback
 -------------------------------------
@@ -120,6 +125,7 @@ bookkeeping and prefill planning. ``tests/test_kivi_kv_cache_cuda.py`` compares
 the kernels with an independent PyTorch reference: stored codes and metadata,
 decode attention on the same quantized tensors at BF16 tolerance for 1024,
 4096 and 8192 cached tokens across residual boundaries, chunked prefill, slot
-reuse, CUDA graph replay and cache size. ``examples/kivi/`` contains the
-decode benchmark, rollout comparison, teacher-forced long-context evaluation
-and the seeded training harness used for the reported results.
+reuse, CUDA graph replay, storage release on clear and cache size.
+``examples/kivi/README.md`` reports memory, decode speed, generation quality,
+long-context rollouts and a three-seed GSPO comparison against the
+model-dtype cache, with the harnesses in ``examples/kivi/`` that produce them.
