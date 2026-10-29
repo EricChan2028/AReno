@@ -372,7 +372,9 @@ def _kivi_decode_kernel(
     slot = tl.load(SLOTS + row).to(tl.int64)
     past = total - 1 - residual
     quantized = tl.where(past >= 0, (past // GROUP) * GROUP, 0)
-    num_tiles = tl.cdiv(total, BLOCK_N)
+    # Whole quantized tiles first (no masks, no ring reads), then ring tiles.
+    quant_tiles = quantized // BLOCK_N
+    num_tiles = quant_tiles + tl.cdiv(total - quantized, BLOCK_N)
     per_split = tl.cdiv(num_tiles, NUM_SPLITS)
     tile_begin = split * per_split
     tile_end = tl.minimum(tile_begin + per_split, num_tiles)
@@ -394,37 +396,33 @@ def _kivi_decode_kernel(
     l_i = tl.zeros([HEADS_PAD], tl.float32)
     acc = tl.zeros([HEADS_PAD, HEAD_DIM], tl.float32)
     for tile in range(tile_begin, tile_end):
-        start = tile * BLOCK_N
-        positions = start + tok
-        valid = positions < total
-        in_quant = positions < quantized
-        in_ring = valid & (positions >= quantized)
-        # BLOCK_N divides the block size, so a tile never straddles blocks.
-        block = tl.load(BLOCK_TABLE + row * stride_bt_row + start // BLOCK_SIZE).to(tl.int64)
-        offsets = start % BLOCK_SIZE + tok
-        ring_rows = (positions % ring_size)[:, None] * stride_ring_pos + dim[None, :]
-
-        kc = block * stride_kc_block + kv_head * stride_kc_head + offsets[:, None] * stride_kc_tok + packed[None, :]
-        ks = block * stride_ks_block + kv_head * stride_ks_head + (offsets // GROUP)[:, None] * stride_ks_group
-        k = _unpack(tl.load(K_CODES + kc, mask=in_quant[:, None], other=0), BLOCK_N, HEAD_DIM, BITS)
-        k_scale = tl.load(K_SCALE + ks + dim[None, :], mask=in_quant[:, None], other=0.0).to(tl.float32)
-        k_zero = tl.load(K_ZERO + ks + dim[None, :], mask=in_quant[:, None], other=0.0).to(tl.float32)
-        k = k * k_scale + k_zero
-        k = tl.where(in_quant[:, None], k, tl.load(ring_k + ring_rows, mask=in_ring[:, None], other=0.0).to(tl.float32))
+        if tile < quant_tiles:
+            # BLOCK_N divides GROUP: the tile shares one key scale row and never
+            # straddles a paged block.
+            start = tile * BLOCK_N
+            block = tl.load(BLOCK_TABLE + row * stride_bt_row + start // BLOCK_SIZE).to(tl.int64)
+            offsets = start % BLOCK_SIZE + tok
+            kc = block * stride_kc_block + kv_head * stride_kc_head + offsets[:, None] * stride_kc_tok + packed[None, :]
+            ks = block * stride_ks_block + kv_head * stride_ks_head + ((start % BLOCK_SIZE) // GROUP) * stride_ks_group
+            k = _unpack(tl.load(K_CODES + kc), BLOCK_N, HEAD_DIM, BITS)
+            k = k * tl.load(K_SCALE + ks + dim).to(tl.float32)[None, :] + tl.load(K_ZERO + ks + dim).to(tl.float32)[None, :]
+            vc = block * stride_vc_block + kv_head * stride_vc_head + offsets[:, None] * stride_vc_tok + packed[None, :]
+            vs = block * stride_vs_block + kv_head * stride_vs_head + offsets[:, None] * stride_vs_tok + (dim // GROUP)[None, :]
+            v = _unpack(tl.load(V_CODES + vc), BLOCK_N, HEAD_DIM, BITS)
+            v = v * tl.load(V_SCALE + vs).to(tl.float32) + tl.load(V_ZERO + vs).to(tl.float32)
+            valid = tok < BLOCK_N
+        else:
+            positions = quantized + (tile - quant_tiles) * BLOCK_N + tok
+            valid = positions < total
+            ring = (positions % ring_size)[:, None] * stride_ring_pos + dim[None, :]
+            k = tl.load(ring_k + ring, mask=valid[:, None], other=0.0).to(tl.float32)
+            v = tl.load(ring_v + ring, mask=valid[:, None], other=0.0).to(tl.float32)
         # Split the fp32 keys into high and low halves in the query dtype so
         # two tensor-core dots reproduce the fp32 dot product closely.
         k_hi = k.to(q.dtype)
         k_lo = (k - k_hi.to(tl.float32)).to(q.dtype)
         scores = (tl.dot(q, tl.trans(k_hi)) + tl.dot(q, tl.trans(k_lo))) * qk_scale
         scores = tl.where(valid[None, :], scores, float("-inf"))
-
-        vc = block * stride_vc_block + kv_head * stride_vc_head + offsets[:, None] * stride_vc_tok + packed[None, :]
-        vs = block * stride_vs_block + kv_head * stride_vs_head + offsets[:, None] * stride_vs_tok + (dim // GROUP)[None, :]
-        v = _unpack(tl.load(V_CODES + vc, mask=in_quant[:, None], other=0), BLOCK_N, HEAD_DIM, BITS)
-        v_scale = tl.load(V_SCALE + vs, mask=in_quant[:, None], other=0.0).to(tl.float32)
-        v_zero = tl.load(V_ZERO + vs, mask=in_quant[:, None], other=0.0).to(tl.float32)
-        v = v * v_scale + v_zero
-        v = tl.where(in_quant[:, None], v, tl.load(ring_v + ring_rows, mask=in_ring[:, None], other=0.0).to(tl.float32))
 
         # Online softmax in base 2 (qk_scale already folds in log2(e)).
         m_new = tl.maximum(m_i, tl.max(scores, axis=1))
@@ -608,7 +606,7 @@ def decode_attention(
     bits: int,
     block_size: int,
     num_splits: int,
-    block_n: int = 64,
+    block_n: int = 32,
 ) -> torch.Tensor:
     """Single-token decode attention over a KIVI paged cache.
 
@@ -624,8 +622,8 @@ def decode_attention(
     out = torch.empty_like(q)
     if rows == 0:
         return out
-    if block_size % block_n or block_n % group_size:
-        raise ValueError(f"block_n {block_n} must divide block size {block_size} and be a multiple of {group_size}")
+    if group_size % block_n or block_n < 16:
+        raise ValueError(f"block_n {block_n} must be >= 16 and divide the KIVI group size {group_size}")
     if num_splits > 1:
         part_acc = torch.empty((rows, query_heads, num_splits, head_dim), device=q.device, dtype=torch.float32)
         part_max = torch.empty((rows, query_heads, num_splits), device=q.device, dtype=torch.float32)
