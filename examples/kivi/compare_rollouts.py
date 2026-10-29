@@ -14,12 +14,16 @@ import argparse
 import json
 from pathlib import Path
 
-BUCKETS = (1024, 2048, 4096, 8192, 16384, 32768)
+BUCKETS = (128, 192, 256, 384, 512, 1024, 2048, 4096, 8192, 16384, 32768)
 
 
 def _load(path: Path) -> list[dict]:
     with (path / "rollouts.jsonl").open() as handle:
         return [json.loads(line) for line in handle]
+
+
+def _mean(values: list[float]) -> float:
+    return sum(values) / len(values)
 
 
 def _bucket(position: int) -> str:
@@ -67,8 +71,9 @@ def compare(baseline: list[dict], candidate: list[dict]) -> dict:
         "mean_first_divergence_token": sum(divergence) / len(divergence) if divergence else None,
         "logprob_abs_diff_mean_on_agreed_prefix": sum(all_diffs) / len(all_diffs) if all_diffs else None,
         "logprob_abs_diff_by_absolute_position": {
-            bucket: {"tokens": len(values), "mean_abs_diff": sum(values) / len(values)}
-            for bucket, values in sorted(abs_diff_by_bucket.items(), key=lambda item: item[0])
+            bucket: {"tokens": len(abs_diff_by_bucket[bucket]), "mean_abs_diff": _mean(abs_diff_by_bucket[bucket])}
+            for bucket in [f"<{edge}" for edge in BUCKETS] + [f">={BUCKETS[-1]}"]
+            if bucket in abs_diff_by_bucket
         },
         "mean_response_tokens_baseline": sum(len(row["resp_tokens"]) for row in baseline) / len(baseline),
         "mean_response_tokens_candidate": sum(len(row["resp_tokens"]) for row in candidate) / len(candidate),
