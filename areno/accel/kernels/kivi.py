@@ -617,6 +617,7 @@ def decode_attention(
     block_size: int,
     num_splits: int,
     block_n: int = 32,
+    num_warps: int = 4,
 ) -> torch.Tensor:
     """Single-token decode attention over a KIVI paged cache.
 
@@ -677,7 +678,7 @@ def decode_attention(
         BLOCK_SIZE=block_size,
         BLOCK_N=block_n,
         NUM_SPLITS=num_splits,
-        num_warps=4,
+        num_warps=num_warps,
         # Deeper software pipelining buffers several dequantization tiles in
         # shared memory and exceeds the ~100 KiB per-block limit of sm_120.
         num_stages=1,
