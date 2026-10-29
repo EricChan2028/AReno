@@ -111,8 +111,7 @@ def main() -> None:
     from areno.engine.runtime.metadata import InferMeta
     from areno.models.registry import build_model, config_from_hf, load_model_weights
 
-    device = torch.device("cuda")
-    torch.cuda.set_device(device)
+    device = torch.device("cuda", torch.cuda.current_device())
     tokenizer = AutoTokenizer.from_pretrained(args.model)
     tokens = _windows(tokenizer, args.text, args.rows, args.length).to(device)
     config = config_from_hf(args.model)
