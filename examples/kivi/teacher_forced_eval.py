@@ -108,6 +108,7 @@ def main() -> None:
     args = parse_args()
     from transformers import AutoTokenizer
 
+    from areno.engine.modeling import skip_torch_init
     from areno.engine.runtime.metadata import InferMeta
     from areno.models.registry import build_model, config_from_hf, load_model_weights
 
@@ -115,7 +116,15 @@ def main() -> None:
     tokenizer = AutoTokenizer.from_pretrained(args.model)
     tokens = _windows(tokenizer, args.text, args.rows, args.length).to(device)
     config = config_from_hf(args.model)
-    model = build_model(config).to(device=device)
+    # Same construction as the engine worker: parameters in the model dtype,
+    # allocated on the device, with initializers skipped before loading.
+    default_dtype = torch.get_default_dtype()
+    torch.set_default_dtype(config.dtype)
+    try:
+        with torch.device(device), skip_torch_init(enabled=True):
+            model = build_model(config)
+    finally:
+        torch.set_default_dtype(default_dtype)
     load_model_weights(model, config, args.model)
     model.eval()
 
