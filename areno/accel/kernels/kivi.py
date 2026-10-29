@@ -206,7 +206,10 @@ def _kivi_decode_partial_kernel(
     NUM_SPLITS: tl.constexpr,
 ):
     # Grid: (row, KV head, split). The program serves all QUERIES_PER_KV query
-    # heads that share this KV head (GQA), padded to HEADS_PAD rows for tl.dot.
+    # heads that share this KV head (GQA), padded to the power of two HEADS_PAD.
+    # Scores and value accumulation use fp32 FMAs instead of tensor-core dots:
+    # decode is bandwidth bound, and fp32 keeps the dequantized K/V exact
+    # instead of rounding them to bf16 before the products.
     # CACHE_SEQLENS holds the tokens cached before this step; the new token at
     # that position has already been written to the ring, so the row attends
     # to `total = cached + 1` positions: the paged quantized prefix
@@ -233,7 +236,7 @@ def _kivi_decode_partial_kernel(
         Q + row * stride_q_row + q_heads[:, None] * stride_q_head + dim[None, :],
         mask=head_mask[:, None],
         other=0.0,
-    )
+    ).to(tl.float32)
     m_i = tl.full([HEADS_PAD], float("-inf"), tl.float32)
     l_i = tl.zeros([HEADS_PAD], tl.float32)
     acc = tl.zeros([HEADS_PAD, HEAD_DIM], tl.float32)
@@ -265,13 +268,13 @@ def _kivi_decode_partial_kernel(
             k = tl.load(K_RING + ring, mask=valid[:, None], other=0.0).to(tl.float32)
             v = tl.load(V_RING + ring, mask=valid[:, None], other=0.0).to(tl.float32)
         # Online softmax in base 2 (qk_scale already folds in log2(e)).
-        scores = tl.dot(q, tl.trans(k.to(q.dtype))) * qk_scale
+        scores = tl.sum(q[:, None, :] * k[None, :, :], axis=2) * qk_scale
         scores = tl.where(valid[None, :], scores, float("-inf"))
         m_new = tl.maximum(m_i, tl.max(scores, axis=1))
         alpha = tl.exp2(m_i - m_new)
         p = tl.exp2(scores - m_new[:, None])
         l_i = l_i * alpha + tl.sum(p, axis=1)
-        acc = acc * alpha[:, None] + tl.dot(p.to(q.dtype), v.to(q.dtype))
+        acc = acc * alpha[:, None] + tl.sum(p[:, :, None] * v[None, :, :], axis=1)
         m_i = m_new
 
     pa = row * stride_pa_row + q_heads[:, None] * stride_pa_head + split * stride_pa_split + dim[None, :]
@@ -421,6 +424,7 @@ def decode_attention(
     rows, query_heads, head_dim = q.shape
     num_kv_heads = k_ring.shape[1]
     queries_per_kv = query_heads // num_kv_heads
+    heads_pad = triton.next_power_of_2(queries_per_kv)
     k_codes, k_scale, k_zero, v_codes, v_scale, v_zero = cache_tensors
     out = torch.empty_like(q)
     lse = torch.empty((rows, query_heads), device=q.device, dtype=torch.float32) if return_lse else None
@@ -472,13 +476,14 @@ def decode_attention(
         part_max.stride(0),
         part_max.stride(1),
         QUERIES_PER_KV=queries_per_kv,
-        HEADS_PAD=max(16, triton.next_power_of_2(queries_per_kv)),
+        HEADS_PAD=heads_pad,
         HEAD_DIM=head_dim,
         GROUP=group_size,
         BITS=bits,
         BLOCK_SIZE=block_size,
         NUM_SPLITS=num_splits,
-        num_warps=4,
+        # The (heads, GROUP, HEAD_DIM) fp32 products grow with GQA width.
+        num_warps=4 if heads_pad <= 2 else 8,
     )
     _kivi_combine_kernel[(rows, query_heads)](
         part_acc,
