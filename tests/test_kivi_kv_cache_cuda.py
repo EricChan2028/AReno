@@ -483,7 +483,13 @@ def test_clear_releases_kivi_storage_attached_to_attention_layers():
     torch.cuda.synchronize()
     baseline = torch.cuda.memory_allocated()
     caches = attach_kivi_kv_caches(
-        model, spec, num_blocks=16, block_size=BLOCK_SIZE, num_slots=5, device=torch.device("cuda"), dtype=torch.bfloat16
+        model,
+        spec,
+        num_blocks=16,
+        block_size=BLOCK_SIZE,
+        num_slots=5,
+        device=torch.device("cuda"),
+        dtype=torch.bfloat16,
     )
     attached = torch.cuda.memory_allocated() - baseline
     expected = sum(cache.nbytes() for cache in caches)

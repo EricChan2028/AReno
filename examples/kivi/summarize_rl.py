@@ -29,7 +29,11 @@ def _scalars(run_dir: Path) -> dict[str, list[tuple[int, float]]]:
     accumulator = EventAccumulator(str(run_dir / "tb"), size_guidance={"scalars": 0})
     accumulator.Reload()
     tags = set(accumulator.Tags()["scalars"])
-    return {tag: [(event.step, event.value) for event in accumulator.Scalars(tag)] for tag in (REWARD, LOGP, *TIMES) if tag in tags}
+    return {
+        tag: [(event.step, event.value) for event in accumulator.Scalars(tag)]
+        for tag in (REWARD, LOGP, *TIMES)
+        if tag in tags
+    }
 
 
 def _mean(values: list[float]) -> float | None:
@@ -52,7 +56,11 @@ def summarize(arms: dict[str, list[Path]], window: int) -> dict:
                     "mean_reward": _mean(rewards),
                     "reward_curve": rewards,
                     "logp_abs_diff_mean": _mean([value for _, value in scalars.get(LOGP, [])]),
-                    **{f"median_{tag}": statistics.median([v for _, v in scalars[tag]]) for tag in TIMES if scalars.get(tag)},
+                    **{
+                        f"median_{tag}": statistics.median([v for _, v in scalars[tag]])
+                        for tag in TIMES
+                        if scalars.get(tag)
+                    },
                 }
             )
         finals = [seed["final_window_reward"] for seed in seeds if seed["final_window_reward"] is not None]
@@ -60,7 +68,9 @@ def summarize(arms: dict[str, list[Path]], window: int) -> dict:
             "seeds": seeds,
             "final_window_reward_mean": _mean(finals),
             "final_window_reward_std": statistics.stdev(finals) if len(finals) > 1 else None,
-            "logp_abs_diff_mean": _mean([seed["logp_abs_diff_mean"] for seed in seeds if seed["logp_abs_diff_mean"] is not None]),
+            "logp_abs_diff_mean": _mean(
+                [seed["logp_abs_diff_mean"] for seed in seeds if seed["logp_abs_diff_mean"] is not None]
+            ),
         }
         if baseline is None:
             baseline = entry["final_window_reward_mean"]
@@ -79,7 +89,9 @@ def _plot(report: dict, path: Path) -> None:
     fig, ax = plt.subplots(figsize=(8, 4.5))
     for index, (arm, entry) in enumerate(report["arms"].items()):
         for seed_index, seed in enumerate(entry["seeds"]):
-            ax.plot(seed["reward_curve"], color=f"C{index}", alpha=0.85, linewidth=1, label=arm if seed_index == 0 else None)
+            ax.plot(
+                seed["reward_curve"], color=f"C{index}", alpha=0.85, linewidth=1, label=arm if seed_index == 0 else None
+            )
     ax.set_xlabel("training step")
     ax.set_ylabel(REWARD)
     ax.legend()
