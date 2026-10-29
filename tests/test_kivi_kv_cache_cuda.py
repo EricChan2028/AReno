@@ -268,7 +268,7 @@ def test_triton_pack_and_unpack_match_reference_layout(bits):
 
 
 @pytest.mark.parametrize("bits", [2, 4])
-@pytest.mark.parametrize("group_size", [32, 64, 128])
+@pytest.mark.parametrize("group_size", [16, 32, 64, 128])
 @torch.inference_mode()
 def test_prefill_store_matches_reference_quantizer(bits, group_size):
     generator = torch.Generator().manual_seed(bits * 100 + group_size)
@@ -288,12 +288,14 @@ def test_prefill_store_matches_reference_quantizer(bits, group_size):
         assert_state_matches_reference(cache, seq)
 
 
-@pytest.mark.parametrize("bits", [2, 4])
-@pytest.mark.parametrize("total", [1024, 4096, 8192])
+@pytest.mark.parametrize(
+    "bits,total,group_size",
+    [(bits, total, 32) for bits in (2, 4) for total in (1024, 4096, 8192)] + [(2, 1024, 16), (4, 1024, 64)],
+)
 @torch.inference_mode()
-def test_decode_crosses_residual_boundaries_and_matches_reference(bits, total):
-    generator = torch.Generator().manual_seed(total + bits)
-    spec = KiviSpec(bits=bits, group_size=32, residual_length=128)
+def test_decode_crosses_residual_boundaries_and_matches_reference(bits, total, group_size):
+    generator = torch.Generator().manual_seed(total + bits + group_size)
+    spec = KiviSpec(bits=bits, group_size=group_size, residual_length=128)
     steps = 2 * spec.group_size + 7  # crosses at least two flush boundaries
     rows = 3
     blocks_per_row = -(-(total + steps) // BLOCK_SIZE)
