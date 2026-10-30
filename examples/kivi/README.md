@@ -21,23 +21,25 @@ Qwen3-0.6B on one RTX PRO 5000 72GB:
 | 8K-token prompts, 32 concurrent: accuracy / peak memory / tokens per s | 70.7% / 45.1 GiB / 854 | 70.5% / 19.5 GiB / 1206 | 64.7% / 14.7 GiB / 1175 |
 | Most concurrent 8K-token rollouts measured on the 72 GB GPU | 48 (64 runs out of memory) | 128 in 57.6 GiB | 256 in 69.7 GiB |
 | WikiText-2 perplexity change, positions up to 16K / 16K-32K | - | +0.3-0.8% / +1.0% | +6.9-12.3% / +24.5% |
-| GSPO final-window reward, 3 seeds (change vs BF16) | 0.807 | 0.808 (+0.001) | 0.708 (-0.099) |
-| Native `train/logp_abs_diff_mean` | 0.015 | 0.032 | 0.209 |
-| Trained policies, BF16-cache validation: loss change / GSM8K accuracy | - / 76.7% | +0.38% / 75.2% | +1.40% / 72.2% |
+| GSPO final-window reward (change vs BF16) | 0.806 (6 seeds) | 0.806, +0.000 (6 seeds) | 0.708, -0.097 (3 seeds); with R = 512: 0.769, -0.036 |
+| Native `train/logp_abs_diff_mean` | 0.015 | 0.032 | 0.209; with R = 512: 0.117 |
+| Trained policies, BF16-cache validation: loss change / GSM8K accuracy | - / 76.4% | +0.20% / 75.9% | +1.28% / 72.2%; with R = 512: +1.22% / 74.4% |
 
 - **KIVI-4 meets every target of the issue.** It stores a third of the BF16
   cache, runs decode attention 1.4-1.8x faster with 32 or more sequences,
   keeps generation quality within noise at short and 8K-token contexts, lets
   2.7x more 8K-token rollouts share the GPU, and trains GSPO to the same
-  reward as BF16 over three seeds, with a validation loss 0.38% above BF16.
-  The held-out accuracy of its policies (75.2% against 76.7%) lies inside
-  its own seed spread of 73.6-77.0%.
+  final reward as BF16 over six seeds, with a validation loss 0.20% above
+  BF16 and held-out accuracy within 0.5 points.
 - **KIVI-2 trades quality for a fifth of the cache.** With the default
   128-token residual window it loses 3.3 GSM8K points (3.5-7 at 8K-token
   contexts), and its rollouts diverge enough from the training policy
   (native divergence 0.21) that GSPO stops improving after about 70 steps and
-  ends 0.099 below BF16, missing the 0.05 reward target. A 512-token window
-  recovers its generation quality (72.25% on GSM8K).
+  ends 0.097 below BF16, missing the 0.05 reward target. A 512-token window
+  recovers its GSM8K accuracy (72.25%), halves the divergence and keeps the
+  RL reward within 0.036 of BF16, inside the target, though its held-out
+  accuracy stays 2 points lower and its reward gap widens over the last 20
+  steps.
 - **Save/resume works for both caches**, and the resumed runs continue the
   uninterrupted ones.
 - **Recommendation:** `kv_cache_dtype="kivi4"` for RL rollouts; `kivi2` only
@@ -56,7 +58,7 @@ Qwen3-0.6B on one RTX PRO 5000 72GB:
 | 8192-token case: cache bytes with scales and residual below BF16; total peak including dequantization workspace; decode throughput; quality | sections 2, 3 and 4-6 | cache 0.206x (KIVI-2) / 0.331x (KIVI-4) of BF16; allocator peak with workspace 0.21x / 0.34x at 128 rows; decode step 1.6-2.25x faster with 8+ rows |
 | Fixed commit, model revision, seed, dtype, batch/context and software; 2 warmup + at least 10 measured steps; allocated/reserved peaks and step time | [Setup](#setup), section 3 (2 + 20 steps, allocator peaks) | done; discrete GPU, so no unified-memory accounting applies |
 | Public `Trainer` end to end with updates and save/resume; native `train/logp_abs_diff_mean` | section 7 | done: `areno train` GSPO, step-50 checkpoints resumed for BF16 and KIVI-2; divergence 0.015 (BF16), 0.032 (KIVI-4), 0.209 (KIVI-2) |
-| At least 3 seeds with fixed data and budget; final validation loss at most +2%; final-window reward no more than 0.05 below BF16, with reward curves | section 7 | KIVI-4 passes (reward +0.001, validation loss +0.38%); KIVI-2 with R = 128 passes the loss target (+1.40%) but misses the reward target (-0.099) |
+| At least 3 seeds with fixed data and budget; final validation loss at most +2%; final-window reward no more than 0.05 below BF16, with reward curves | section 7 | KIVI-4 passes (6 seeds: reward +0.000, validation loss +0.20%); KIVI-2 passes with R = 512 (reward -0.036, loss +1.22%) but misses the reward target with the default R = 128 (reward -0.097, loss +1.28%) |
 | Core tests and repository checks | `pytest tests/ -k cpu` with triton, flash-attn and CUDA hidden as in CI (only the 8 `test_real_gloo_*` tests fail, identically on upstream e17794c), `pre-commit run --all-files` | pass |
 
 ## Setup
@@ -69,12 +71,13 @@ Qwen3-0.6B on one RTX PRO 5000 72GB:
 | Model | `Qwen/Qwen3-0.6B` from ModelScope (revision `master`, created 2025-07-26), BF16 weights, `model.safetensors` sha256 `f47f7117…6874b`; `Qwen/Qwen3-1.7B` (same revision date) for two scaling checks |
 | GSM8K | `gsm8k` `main` from ModelScope through `areno.cli.train`'s dataset resolver: 7473 train / 1319 test rows |
 | WikiText-2 | `wikitext-2-raw-v1` test split from the raw parquet file of `Salesforce/wikitext` (sha256 `5f1bea06…6d91`), joined into one text |
-| Seeds | rollout sampling seed `seed * 1_000_003 + step` per RL step (seeds 1, 2, 3); evaluation seed 1234 |
+| Seeds | rollout sampling seed `seed * 1_000_003 + step` per RL step (seeds 1-6 for BF16 and KIVI-4, 1-3 for the other arms); evaluation seed 1234 |
 
 The measurements ran on development commits of this change, kept on branch
 `kivi-590-dev` of the contributor's fork: 390ac48 (BF16 RL arm, generation and
-throughput runs, greedy validation), 5c49afe (KIVI RL arms and the resumed
-runs), 5706d51 (teacher-forced runs) and f333cdc (kernel benchmark). Their
+throughput runs, greedy validation), 5c49afe (KIVI RL arms, BF16 seeds 4-6
+and the resumed runs), 5706d51 (teacher-forced runs) and f333cdc (kernel
+benchmark). Their
 `areno/` trees match this change apart from formatting, the G ≥ 32 check and
 the allocation log line (`git diff -w <commit> -- areno/`).
 
@@ -420,7 +423,9 @@ Greedy token agreement with the first run (`compare_rollouts.py`): mean position
 and a per-step rollout seed: GSPO on GSM8K train, Qwen3-0.6B, 32 prompts × 8
 samples per step, up to 2048 new tokens at temperature 1.0, 128 concurrent
 sequences, learning rate 1e-6 with cosine decay, 100 steps, checkpoints every
-50 steps, seeds 1-3 per arm. Rollout log-probabilities are the ones the KIVI
+50 steps; seeds 1-6 for BF16 and KIVI-4, seeds 1-3 for KIVI-2 with R = 128
+and with R = 512. Every run sees the same prompts at the same step; the seed
+only changes sampling. Rollout log-probabilities are the ones the KIVI
 attention produced while sampling; the trainer recomputes training
 log-probabilities with the BF16 forward, so the native
 `train/logp_abs_diff_mean` measures the KV-cache error in the behavior policy.
@@ -430,40 +435,46 @@ run-to-run noise of this setup.
 
 ### 7.1 Reward and native log-probability divergence
 
-KIVI-4 tracks BF16 within that noise: its final-window reward is 0.001 above
-BF16 (the repeat arm differs by 0.0006), and its native log-probability
-divergence is 0.032, twice the 0.015 that BF16 rollouts already show against
-the training forward. KIVI-2 with R = 128 starts 0.03 below BF16, the
-generation-quality gap of section 5, and keeps pace until about step 70; then
-its reward falls back while the other arms keep improving, ending 0.099 below
-BF16. Its divergence is 0.21, 14 times BF16's. AReno's GSPO loss forms its
-ratio against the recomputed training log-probabilities
-(`logprobs - logprobs.detach()`), so rollouts count as on-policy and nothing
-reweights samples drawn from the shifted KIVI-2 policy.
+KIVI-4 tracks BF16 within that noise: over six seeds each, both reach a
+final-window reward of 0.8057 (the repeat arm differs by 0.0009), and its
+native log-probability divergence is 0.032, twice the 0.015 that BF16
+rollouts already show against the training forward. KIVI-2 with R = 128
+starts 0.03 below BF16, the generation-quality gap of section 5, and keeps
+pace until about step 70; then its reward falls back while the other arms keep
+improving, ending 0.097 below BF16. Its divergence is 0.21, 14 times BF16's.
+AReno's GSPO loss forms its ratio against the recomputed training
+log-probabilities (`logprobs - logprobs.detach()`), so rollouts count as
+on-policy and nothing reweights samples drawn from the shifted KIVI-2 policy.
+With a 512-token residual window the divergence drops to 0.117, the reward
+stays 0.003-0.022 below BF16 in every 10-step window of the first 80 steps,
+and the final window ends 0.036 below BF16, inside the 0.05 target. The gap
+widens to 0.03-0.04 over the last 20 steps, so longer runs should be checked
+before relying on it.
 
-#### GSPO on GSM8K train, 3 seeds per arm: reward and native log-probability divergence (`rl_final/summary_final.json`)
+#### GSPO on GSM8K train, 3-6 seeds per arm: reward and native log-probability divergence (`rl_final/summary_final.json`)
 
 | KV cache | final-window reward per seed (last 20 steps) | mean +- std | change vs BF16 | train/logp_abs_diff_mean | median step s (rollout s) |
 |---|---|---|---|---|---|
-| BF16 | 0.8080, 0.8104, 0.8031 | 0.8072 +- 0.0037 | - | 0.0152 | 81.2 (46.8) |
-| BF16 repeat | 0.8070, 0.8090, 0.8037 | 0.8066 +- 0.0027 | -0.0006 | 0.0152 | 82.1 (47.2) |
-| KIVI-2 | 0.6965, 0.6912, 0.7371 | 0.7083 +- 0.0251 | -0.0989 | 0.2086 | 87.8 (47.7) |
-| KIVI-4 | 0.8115, 0.8033, 0.8098 | 0.8082 +- 0.0043 | +0.0010 | 0.0316 | 78.4 (42.4) |
+| BF16 | 0.8080, 0.8104, 0.8031, 0.8057, 0.8016, 0.8053 | 0.8057 +- 0.0032 | - | 0.0152 | 81.6 (47.1) |
+| BF16 repeat | 0.8070, 0.8090, 0.8037 | 0.8066 +- 0.0027 | +0.0009 | 0.0152 | 82.1 (47.2) |
+| KIVI-4 | 0.8115, 0.8033, 0.8098, 0.8088, 0.8027, 0.7979 | 0.8057 +- 0.0052 | +0.0000 | 0.0316 | 78.5 (42.5) |
+| KIVI-2 | 0.6965, 0.6912, 0.7371 | 0.7083 +- 0.0251 | -0.0974 | 0.2086 | 87.8 (47.7) |
+| KIVI-2, R = 512 | 0.7793, 0.7602, 0.7686 | 0.7693 +- 0.0096 | -0.0363 | 0.1167 | 67.6 (37.4) |
 
 Mean reward over seeds in 10-step windows (the reward curve; per-step values are in the JSON):
 
-| steps | BF16 | BF16 repeat | KIVI-2 | KIVI-4 |
-|---|---|---|---|---|
-| 1-10 | 0.722 | 0.724 | 0.693 | 0.715 |
-| 11-20 | 0.748 | 0.748 | 0.719 | 0.750 |
-| 21-30 | 0.809 | 0.810 | 0.781 | 0.805 |
-| 31-40 | 0.774 | 0.779 | 0.743 | 0.782 |
-| 41-50 | 0.812 | 0.816 | 0.785 | 0.813 |
-| 51-60 | 0.779 | 0.784 | 0.747 | 0.786 |
-| 61-70 | 0.799 | 0.796 | 0.764 | 0.807 |
-| 71-80 | 0.798 | 0.799 | 0.730 | 0.806 |
-| 81-90 | 0.828 | 0.826 | 0.740 | 0.832 |
-| 91-100 | 0.786 | 0.787 | 0.677 | 0.784 |
+| steps | BF16 | BF16 repeat | KIVI-4 | KIVI-2 | KIVI-2, R = 512 |
+|---|---|---|---|---|---|
+| 1-10 | 0.722 | 0.724 | 0.720 | 0.693 | 0.717 |
+| 11-20 | 0.750 | 0.748 | 0.751 | 0.719 | 0.743 |
+| 21-30 | 0.805 | 0.810 | 0.806 | 0.781 | 0.802 |
+| 31-40 | 0.776 | 0.779 | 0.780 | 0.743 | 0.773 |
+| 41-50 | 0.813 | 0.816 | 0.809 | 0.785 | 0.791 |
+| 51-60 | 0.777 | 0.784 | 0.781 | 0.747 | 0.765 |
+| 61-70 | 0.799 | 0.796 | 0.804 | 0.764 | 0.792 |
+| 71-80 | 0.799 | 0.799 | 0.799 | 0.730 | 0.790 |
+| 81-90 | 0.827 | 0.826 | 0.828 | 0.740 | 0.796 |
+| 91-100 | 0.784 | 0.787 | 0.783 | 0.677 | 0.743 |
 
 ### 7.2 Save and resume
 
@@ -489,20 +500,23 @@ between hosts for the BF16 resume matches its source file by file (sha256).
 Every final policy was evaluated with the BF16 cache, so these numbers isolate
 the effect of having trained with a KIVI cache. The validation loss is the
 mean NLL of the GSM8K test reference solutions (8 windows of 4096 tokens),
-the quantity behind the issue's "at most +2%" target: KIVI-4 +0.38% and
-KIVI-2 +1.40% against BF16, while the BF16 repeat arm differs by +0.23%.
-Greedy accuracy on the 1319 test problems rises from 73.16% (base model) to
-76.70% after BF16 training; KIVI-4 policies reach 75.16% with a wider seed
-spread (73.6-77.0%), and KIVI-2 policies 72.18%, with one seed at 66.6%.
+the quantity behind the issue's "at most +2%" target: KIVI-4 +0.20%, KIVI-2
++1.28% and KIVI-2 with R = 512 +1.22% against BF16, while the BF16 repeat arm
+differs by +0.12%. Greedy accuracy on the 1319 test problems rises from
+73.16% (base model) to 76.37% after BF16 training. KIVI-4 policies reach
+75.92%: with three seeds the gap was 1.5 points, and three more seeds
+shrank it to 0.45, inside the seed spread. KIVI-2 policies reach 72.18%,
+with one seed at 66.6%, and 74.37% with R = 512.
 
 #### Held-out validation of the final policies with the BF16 KV cache: greedy GSM8K test accuracy (1319 problems) and teacher-forced NLL of GSM8K test solutions (8 x 4096 tokens)
 
 | policy | accuracy per seed | accuracy mean +- std | change vs BF16 arm | NLL per seed | NLL mean | NLL change vs BF16 arm |
 |---|---|---|---|---|---|---|
-| trained with BF16 KV (seeds 1, 2, 3) | 76.42%, 77.33%, 76.35% | 76.70% +- 0.55 | - | 1.1701, 1.1721, 1.1717 | 1.1713 | - |
-| trained with BF16 KV, repeat runs (seeds 1, 2, 3) | 77.94%, 78.01%, 77.03% | 77.66% +- 0.55 | +0.96 pts | 1.1766, 1.1715, 1.1738 | 1.1740 | +0.23% |
-| trained with KIVI-4 KV (seeds 1, 2, 3) | 73.62%, 74.91%, 76.95% | 75.16% +- 1.68 | -1.54 pts | 1.1740, 1.1772, 1.1759 | 1.1757 | +0.38% |
-| trained with KIVI-2 KV (seeds 1, 2, 3) | 72.63%, 66.57%, 77.33% | 72.18% +- 5.40 | -4.52 pts | 1.1854, 1.1856, 1.1921 | 1.1877 | +1.40% |
+| trained with BF16 KV (seeds 1, 2, 3, 4, 5, 6) | 76.42%, 77.33%, 76.35%, 75.82%, 76.65%, 75.66% | 76.37% +- 0.60 | - | 1.1701, 1.1721, 1.1717, 1.1737, 1.1719, 1.1761 | 1.1726 | - |
+| trained with BF16 KV, repeat runs (seeds 1, 2, 3) | 77.94%, 78.01%, 77.03% | 77.66% +- 0.55 | +1.29 pts | 1.1766, 1.1715, 1.1738 | 1.1740 | +0.12% |
+| trained with KIVI-4 KV (seeds 1, 2, 3, 4, 5, 6) | 73.62%, 74.91%, 76.95%, 77.71%, 75.97%, 76.35% | 75.92% +- 1.47 | -0.45 pts | 1.1740, 1.1772, 1.1759, 1.1747, 1.1752, 1.1724 | 1.1749 | +0.20% |
+| trained with KIVI-2 KV (seeds 1, 2, 3) | 72.63%, 66.57%, 77.33% | 72.18% +- 5.40 | -4.20 pts | 1.1854, 1.1856, 1.1921 | 1.1877 | +1.28% |
+| trained with KIVI-2 KV, R = 512 (seeds 1, 2, 3) | 74.68%, 74.53%, 73.92% | 74.37% +- 0.40 | -2.00 pts | 1.1860, 1.1872, 1.1874 | 1.1869 | +1.22% |
 | base model | 73.16% | | | 1.1693 | | |
 | base model, second host | 73.16% | | | 1.1693 | | |
 | BF16 seed 1, resumed at step 50 | 75.97% | | | 1.1708 | | |
@@ -602,26 +616,33 @@ python examples/kivi/compare_rollouts.py long_context/auto_mrp32 long_context/ki
     --output long_context/cmp_auto_mrp32_vs_kivi4_mrp32.json
 ```
 
-Section 7, RL (three seeds per arm), save/resume and held-out validation:
+Section 7, RL (seeds 1-6 for BF16 and KIVI-4, 1-3 for the KIVI-2 arms),
+save/resume and held-out validation:
 
 ```bash
 TRAIN_ARGS="--algo gspo --dataset-path $D/gsm8k_main_train --dataset-loader-fn examples/math/dataset_loader.py \
     --reward-fn-path examples/math/math_verify_reward.py --world-size 1 --tp-size 1 --batch-size 32 \
-    --n-samples 8 --max-running-prompts 128 --max-prompt-tokens 512 --max-new-tokens 2048"
+    --n-samples 8 --max-running-prompts 128 --max-prompt-tokens 512 --max-new-tokens 2048 --save-interval 50"
+run() {  # NAME SEED [train_seeded.py options]
+    name=$1 seed=$2; shift 2
+    python examples/kivi/train_seeded.py --seed $seed "$@" -- $TRAIN_ARGS --ckpt $M --max-steps 100 \
+        --metrics-log-dir rl/$name/tb --save-path rl/$name/ckpt
+}
+for seed in 1 2 3 4 5 6; do
+    run s${seed}_auto $seed --kv-cache-dtype auto
+    run s${seed}_kivi4 $seed --kv-cache-dtype kivi4
+done
 for seed in 1 2 3; do
-    for dtype in auto kivi2 kivi4; do
-        python examples/kivi/train_seeded.py --seed $seed --kv-cache-dtype $dtype -- $TRAIN_ARGS --ckpt $M \
-            --max-steps 100 --save-interval 50 \
-            --metrics-log-dir rl/s${seed}_$dtype/tb --save-path rl/s${seed}_$dtype/ckpt
-    done
+    run s${seed}_kivi2 $seed --kv-cache-dtype kivi2
+    run s${seed}_kivi2_r512 $seed --kv-cache-dtype kivi2 --kivi-residual-length 512
 done
 python examples/kivi/summarize_rl.py --window 20 --output rl/summary.json --plot rl/rewards.png \
-    auto=rl/s1_auto,rl/s2_auto,rl/s3_auto kivi2=rl/s1_kivi2,rl/s2_kivi2,rl/s3_kivi2 \
-    kivi4=rl/s1_kivi4,rl/s2_kivi4,rl/s3_kivi4
+    auto=$(echo rl/s{1..6}_auto | tr " " ,) kivi4=$(echo rl/s{1..6}_kivi4 | tr " " ,) \
+    kivi2=$(echo rl/s{1..3}_kivi2 | tr " " ,) kivi2_r512=$(echo rl/s{1..3}_kivi2_r512 | tr " " ,)
 # Resume seed 1 from its step-50 checkpoint: skip the 50 x 32 prompts already
 # used and continue the per-step seed schedule for the remaining 50 steps.
 python examples/kivi/train_seeded.py --seed 1 --kv-cache-dtype kivi2 --resume-step 50 --resume-prompts 1600 -- \
-    $TRAIN_ARGS --ckpt rl/s1_kivi2/ckpt/step_000050 --max-steps 50 --save-interval 50 \
+    $TRAIN_ARGS --ckpt rl/s1_kivi2/ckpt/step_000050 --max-steps 50 \
     --metrics-log-dir rl/s1_kivi2_resume50/tb --save-path rl/s1_kivi2_resume50/ckpt
 # Validate a final policy with the BF16 cache.
 python examples/kivi/rollout_eval.py --model rl/s1_kivi2/ckpt/step_000100 --dataset $D/gsm8k_main_test \

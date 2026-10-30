@@ -65,11 +65,13 @@ longer contexts.
 
 Quantization changes the attention scores and outputs, so generated tokens can
 differ from a model-dtype run. On Qwen3-0.6B, KIVI-4 kept GSM8K accuracy and
-long-context perplexity within noise of the model-dtype cache, while KIVI-2
-with ``R = 128`` lost several points of GSM8K accuracy; a 512-token residual
-window recovered it on GSM8K. ``examples/kivi/README.md`` reports these
-measurements with the commands that produce them. Validate quality on the
-target task before switching a workload to 2-bit.
+long-context perplexity within noise of the model-dtype cache and trained GSPO
+to the same reward, while KIVI-2 with ``R = 128`` lost several points of GSM8K
+accuracy and fell 0.1 behind in GSPO reward; a 512-token residual window
+recovered its GSM8K accuracy and kept its GSPO reward within 0.04.
+``examples/kivi/README.md`` reports these measurements with the commands that
+produce them. Validate quality on the target task before switching a workload
+to 2-bit.
 
 Configuration
 -------------
