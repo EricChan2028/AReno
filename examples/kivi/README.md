@@ -74,12 +74,14 @@ Qwen3-0.6B on one RTX PRO 5000 72GB:
 | Seeds | rollout sampling seed `seed * 1_000_003 + step` per RL step (seeds 1-6 for BF16 and KIVI-4, 1-3 for the other arms); evaluation seed 1234 |
 
 The measurements ran on development commits of this change, kept on branch
-`kivi-590-dev` of the contributor's fork: 390ac48 (BF16 RL arm, generation and
-throughput runs, greedy validation), 5c49afe (KIVI RL arms, BF16 seeds 4-6
-and the resumed runs), 5706d51 (teacher-forced runs) and f333cdc (kernel
-benchmark). Their
-`areno/` trees match this change apart from formatting, the G ≥ 32 check and
-the allocation log line (`git diff -w <commit> -- areno/`).
+`kivi-590-dev` of the contributor's fork: 34c5ea8 (BF16 RL arm, generation and
+throughput runs, greedy validation), c87ae99 (KIVI RL arms, BF16 seeds 4-6
+and the resumed runs), 1c5929e (teacher-forced runs) and 953a1c5 (kernel
+benchmark). Their `areno/` trees match this change apart from formatting, the
+G ≥ 32 check and the allocation log line (`git diff -w <commit> -- areno/`).
+The `commit.txt` files in the raw logs hold the hashes these commits had
+before their messages were edited; `commit-map.txt` there pairs each with its
+`kivi-590-dev` commit, whose tree is identical.
 
 ## 1. Correctness tests
 
