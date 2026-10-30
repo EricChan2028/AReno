@@ -1,0 +1,60 @@
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (250758 > 131072). Running this sequence through the model will result in indexing errors
+loading checkpoint:   0%|          | 0/29 [00:00<?, ?stage/s]loading checkpoint:  69%|██████▉   | 20/29 [00:00<00:00, 192.85stage/s]loading checkpoint: 100%|██████████| 29/29 [00:00<00:00, 191.27stage/s]
+Traceback (most recent call last):
+  File "/root/kivi/wt/eval_5706d51/areno/accel/_extension.py", line 43, in extension
+    _EXT = importlib.import_module("areno.accel._areno_accel")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1324, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'areno.accel._areno_accel'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/kivi/wt/eval_5706d51/examples/kivi/teacher_forced_eval.py", line 206, in <module>
+    main()
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/eval_5706d51/examples/kivi/teacher_forced_eval.py", line 151, in main
+    model(prefill_ids, prefill_pos, infer_meta=prefill_meta)
+  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/eval_5706d51/areno/models/qwen3/model.py", line 392, in forward
+    hidden_states = self.embed_tokens(input_ids)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/eval_5706d51/areno/engine/layers/vocab.py", line 52, in forward
+    out = areno_vocab_embedding(input_ids, self.weight, self.vocab_start, self.vocab_end)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/_dynamo/eval_frame.py", line 929, in _fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/eval_5706d51/areno/accel/embedding.py", line 55, in areno_vocab_embedding
+    return _VocabEmbedding.apply(input_ids, weight, int(vocab_start), int(vocab_end))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/autograd/function.py", line 576, in apply
+    return super().apply(*args, **kwargs)  # type: ignore[misc]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/eval_5706d51/areno/accel/embedding.py", line 20, in forward
+    out = _extension(input_ids.device).areno_vocab_embedding_forward(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/eval_5706d51/areno/accel/_extension.py", line 51, in extension
+    raise RuntimeError(
+RuntimeError: AReno runtime setup failed: the compiled `areno_accel` extension is not installed.
+Why: training and serving require AReno's CUDA extension at runtime.
+Next steps: reinstall with CUDA enabled, for example `pip install -e . --no-build-isolation`, then run `areno check`.
+exit=1

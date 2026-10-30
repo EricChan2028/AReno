@@ -1,0 +1,58 @@
+{
+  "model": "/root/kivi/models/Qwen3-0.6B",
+  "text": "/root/kivi/data/wikitext2_test.txt",
+  "rows": 4,
+  "length": 4096,
+  "prefill": 256,
+  "kivi_group_size": 64,
+  "kivi_residual_length": 128,
+  "cache_bytes": {
+    "auto": 1879048192,
+    "kivi4": 616562688
+  },
+  "decode_seconds": 70.2254003752023,
+  "buckets": {
+    "<1024": {
+      "auto": {
+        "tokens": 3068,
+        "ppl": 20.3101673540112,
+        "kl_vs_auto": 0.0,
+        "top1_agreement_vs_auto": 1.0
+      },
+      "kivi4": {
+        "tokens": 3068,
+        "ppl": 20.401269569958394,
+        "kl_vs_auto": 0.007764658829724875,
+        "top1_agreement_vs_auto": 0.9569752281616688
+      }
+    },
+    "<2048": {
+      "auto": {
+        "tokens": 4096,
+        "ppl": 19.012759122188168,
+        "kl_vs_auto": 0.0,
+        "top1_agreement_vs_auto": 1.0
+      },
+      "kivi4": {
+        "tokens": 4096,
+        "ppl": 19.139875703330564,
+        "kl_vs_auto": 0.007527323879472192,
+        "top1_agreement_vs_auto": 0.953369140625
+      }
+    },
+    "<4096": {
+      "auto": {
+        "tokens": 8192,
+        "ppl": 20.548159039418035,
+        "kl_vs_auto": 0.0,
+        "top1_agreement_vs_auto": 1.0
+      },
+      "kivi4": {
+        "tokens": 8192,
+        "ppl": 20.599734907387422,
+        "kl_vs_auto": 0.007468845355901976,
+        "top1_agreement_vs_auto": 0.957763671875
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "kv_cache_dtype": "kivi2",
+  "runtime": {
+    "attn_backend": "flash",
+    "kv_cache_dtype": "kivi2",
+    "kivi_group_size": 32,
+    "kivi_residual_length": 512
+  },
+  "prompts": 512,
+  "samples_per_prompt": 1,
+  "temperature": 0.0,
+  "seed": null,
+  "accuracy": 0.693359375,
+  "accuracy_stderr": 0.020377882852974438,
+  "generated_tokens": 401598,
+  "mean_response_tokens": 784.37109375,
+  "rollout_seconds": 343.98161720111966,
+  "generated_tokens_per_s": 1167.4984357236542,
+  "max_new_tokens": 2048,
+  "max_running_prompts": 32
+}

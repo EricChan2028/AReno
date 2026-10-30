@@ -1,0 +1,153 @@
+loading checkpoint:   0%|          | 0/29 [00:00<?, ?stage/s]loading checkpoint:  38%|███▊      | 11/29 [00:00<00:00, 105.27stage/s]loading checkpoint:  76%|███████▌  | 22/29 [00:00<00:00, 100.32stage/s]loading checkpoint: 100%|██████████| 29/29 [00:00<00:00, 99.18stage/s] 
+2026-10-30 06:08:14 INFO areno.engine.inference inference.py:1691 - decode CUDA graphs ready: decode=14 verify=0 draft=0 skipped_buckets=0 free_gib=55.31
+2026-10-30 06:08:24 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=9845.6
+2026-10-30 06:08:34 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7187.3
+2026-10-30 06:08:44 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6233.3
+2026-10-30 06:08:54 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7747.4
+2026-10-30 06:09:04 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7774.9
+2026-10-30 06:09:14 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6773.9
+2026-10-30 06:09:24 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6473.3
+2026-10-30 06:09:34 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7983.7
+2026-10-30 06:09:44 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7075.3
+2026-10-30 06:09:54 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6827.9
+2026-10-30 06:10:04 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6942.9
+2026-10-30 06:10:14 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7499.8
+2026-10-30 06:10:24 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6717.7
+2026-10-30 06:10:34 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7011.8
+2026-10-30 06:10:44 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7309.9
+2026-10-30 06:10:54 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6786.4
+2026-10-30 06:11:04 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6763.3
+2026-10-30 06:11:14 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7303.8
+2026-10-30 06:11:24 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6957.1
+2026-10-30 06:11:34 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6959.8
+2026-10-30 06:11:44 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6969.5
+2026-10-30 06:11:54 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7032.1
+2026-10-30 06:12:04 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7152.9
+2026-10-30 06:12:14 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7298.8
+2026-10-30 06:12:24 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6915.5
+2026-10-30 06:12:34 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6769.2
+2026-10-30 06:12:44 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7077.4
+2026-10-30 06:12:54 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7158.3
+2026-10-30 06:13:04 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7044.3
+2026-10-30 06:13:14 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6731.4
+2026-10-30 06:13:24 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7029.4
+2026-10-30 06:13:34 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7082.0
+2026-10-30 06:13:44 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6956.7
+2026-10-30 06:13:54 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6782.7
+2026-10-30 06:14:04 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7051.1
+2026-10-30 06:14:14 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7197.9
+2026-10-30 06:14:24 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7096.1
+2026-10-30 06:14:34 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6962.1
+2026-10-30 06:14:44 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7033.2
+2026-10-30 06:14:54 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7226.5
+2026-10-30 06:15:05 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6965.3
+2026-10-30 06:15:15 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6708.9
+2026-10-30 06:15:25 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6971.5
+2026-10-30 06:15:35 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7107.2
+2026-10-30 06:15:45 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7223.2
+2026-10-30 06:15:55 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6872.8
+2026-10-30 06:16:05 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7230.5
+2026-10-30 06:16:15 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7154.5
+2026-10-30 06:16:25 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7272.2
+2026-10-30 06:16:35 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7250.5
+2026-10-30 06:16:45 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7108.4
+2026-10-30 06:16:55 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7051.5
+2026-10-30 06:17:05 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6923.7
+2026-10-30 06:17:15 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6980.4
+2026-10-30 06:17:25 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7201.9
+2026-10-30 06:17:35 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6994.1
+2026-10-30 06:17:45 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6860.7
+2026-10-30 06:17:55 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6990.5
+2026-10-30 06:18:05 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7019.7
+2026-10-30 06:18:15 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7136.0
+2026-10-30 06:18:25 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6930.4
+2026-10-30 06:18:35 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7387.4
+2026-10-30 06:18:45 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7039.9
+2026-10-30 06:18:55 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6748.7
+2026-10-30 06:19:05 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6842.0
+2026-10-30 06:19:15 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7301.1
+2026-10-30 06:19:25 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7090.1
+2026-10-30 06:19:35 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6941.0
+2026-10-30 06:19:45 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6846.4
+2026-10-30 06:19:55 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7132.5
+2026-10-30 06:20:05 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7127.3
+2026-10-30 06:20:15 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7020.6
+2026-10-30 06:20:25 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6672.2
+2026-10-30 06:20:35 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7355.8
+2026-10-30 06:20:45 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7045.5
+2026-10-30 06:20:55 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7114.0
+2026-10-30 06:21:05 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6960.2
+2026-10-30 06:21:15 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7059.9
+2026-10-30 06:21:25 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7070.1
+2026-10-30 06:21:35 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6933.4
+2026-10-30 06:21:45 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6983.2
+2026-10-30 06:21:55 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7000.1
+2026-10-30 06:22:05 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7118.7
+2026-10-30 06:22:15 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6990.8
+2026-10-30 06:22:25 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7116.7
+2026-10-30 06:22:35 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6968.7
+2026-10-30 06:22:45 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7246.7
+2026-10-30 06:22:55 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6884.5
+2026-10-30 06:23:05 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7165.1
+2026-10-30 06:23:15 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6961.3
+2026-10-30 06:23:25 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7446.1
+2026-10-30 06:23:35 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6791.6
+2026-10-30 06:23:45 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6716.8
+2026-10-30 06:23:55 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7026.7
+2026-10-30 06:24:05 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7035.0
+2026-10-30 06:24:15 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6619.6
+2026-10-30 06:24:25 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7165.0
+2026-10-30 06:24:35 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7336.0
+2026-10-30 06:24:45 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6667.6
+2026-10-30 06:24:55 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6638.8
+2026-10-30 06:25:05 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7406.0
+2026-10-30 06:25:15 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7125.6
+2026-10-30 06:25:25 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6571.9
+2026-10-30 06:25:35 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6948.1
+2026-10-30 06:25:45 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7563.2
+2026-10-30 06:25:55 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6976.8
+2026-10-30 06:26:05 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6493.4
+2026-10-30 06:26:15 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7136.0
+2026-10-30 06:26:25 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7114.0
+2026-10-30 06:26:35 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7103.0
+2026-10-30 06:26:45 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7186.2
+2026-10-30 06:26:55 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6980.2
+2026-10-30 06:27:05 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6981.5
+2026-10-30 06:27:15 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7147.0
+2026-10-30 06:27:25 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7190.8
+2026-10-30 06:27:35 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6692.7
+2026-10-30 06:27:45 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6766.2
+2026-10-30 06:27:55 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7160.3
+2026-10-30 06:28:05 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6897.9
+2026-10-30 06:28:15 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6750.8
+2026-10-30 06:28:25 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7175.4
+2026-10-30 06:28:35 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7105.6
+2026-10-30 06:28:45 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6845.3
+2026-10-30 06:28:55 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6896.1
+2026-10-30 06:29:05 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7309.7
+2026-10-30 06:29:15 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=6957.4
+2026-10-30 06:29:25 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7006.7
+2026-10-30 06:29:35 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=116 cuda_graph=True tokens_per_second=7352.9
+2026-10-30 06:29:45 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=66 cuda_graph=True tokens_per_second=6141.9
+2026-10-30 06:29:55 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=8 cuda_graph=True tokens_per_second=3470.2
+{
+  "kv_cache_dtype": "kivi2",
+  "runtime": {
+    "attn_backend": "flash",
+    "kv_cache_dtype": "kivi2",
+    "kivi_group_size": 32,
+    "kivi_residual_length": 128
+  },
+  "prompts": 1319,
+  "samples_per_prompt": 4,
+  "temperature": 1.0,
+  "seed": 1234,
+  "accuracy": 0.8047763457164518,
+  "accuracy_stderr": 0.005456968249987658,
+  "generated_tokens": 9141817,
+  "mean_response_tokens": 1732.7173995451099,
+  "rollout_seconds": 1313.6704761469737,
+  "generated_tokens_per_s": 6958.987939512171,
+  "max_new_tokens": 2048,
+  "max_running_prompts": 128
+}

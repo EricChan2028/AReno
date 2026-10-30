@@ -1,0 +1,352 @@
+{
+  "kind": "train",
+  "pid": 371219,
+  "summary_text": "AReno training config\n\nAlgorithm\n---------\n  name              gspo\n  default_loss      gspo_loss_fn\n  requires_rollout  yes\n\nInputs\n------\n  ckpt            /root/kivi/models/Qwen3-0.6B\n  dataset_path    /root/kivi/data/gsm8k_main_train\n  model_hub       modelscope\n  dataset_loader  examples/math/dataset_loader.py\n  reward_fn       examples/math/math_verify_reward.py\n  reward_ckpt     none\n  agent_fn        none\n\nRuntime\n-------\n  world_size    1\n  tp_size       1\n  dp_size       1\n  devices       0\n  attn_backend  flash\n  thinking      tokenizer default\n\nRollout\n-------\n  batch_size           32\n  max_prompt_tokens    512\n  max_new_tokens       2048\n  max_context_len      model limit\n  topology             shared with train engine\n  policy_sync          shared weights\n  n_samples            8\n  max_running_prompts  128\n  sampling             greedy=no, temperature=1.0, top_k=-1, top_p=1.0\n\nTraining\n--------\n  max_steps                           100\n  sequence_parallel                   model config (resolved at load)\n  mini_bs                             16\n  score_micro_bs                      8\n  gradient_accumulation_steps         auto\n  qlora                               no\n  lora_rank                           disabled\n  lora_alpha                          n/a\n  lora_dropout                        n/a\n  lora_target_modules                 n/a\n  lora_adapter_path                   n/a\n  optimizer                           lr=1e-06, min_lr=1e-07, decay=cosine/1000, betas=(0.9, 0.999),\n                                      weight_decay=0.01, adam_8bit=no, adam_4bit=no\n  optimizer_state_offload             none\n  optimizer_state_offload_dir         none\n  optimizer_state_offload_batch_size  1\n  grad_clip_norm                      1.0\n\nOutputs\n-------\n  save_path        /root/kivi/runs/rl_final/s6_auto/ckpt\n  save_interval    50\n  export_gguf      none\n  gguf_file_type   disabled\n  metrics_log_dir  /root/kivi/runs/rl_final/s6_auto/tb",
+  "settings": {
+    "sections": [
+      {
+        "title": "Basic",
+        "items": [
+          {
+            "key": "algo",
+            "value": "gspo"
+          },
+          {
+            "key": "ckpt",
+            "value": "/root/kivi/models/Qwen3-0.6B"
+          },
+          {
+            "key": "dataset_path",
+            "value": "/root/kivi/data/gsm8k_main_train"
+          },
+          {
+            "key": "model_hub",
+            "value": "modelscope"
+          },
+          {
+            "key": "dataset_loader_fn",
+            "value": "examples/math/dataset_loader.py"
+          },
+          {
+            "key": "epochs",
+            "value": 10
+          },
+          {
+            "key": "max_steps",
+            "value": 100
+          }
+        ]
+      },
+      {
+        "title": "Runtime",
+        "items": [
+          {
+            "key": "world_size",
+            "value": 1
+          },
+          {
+            "key": "tp_size",
+            "value": 1
+          },
+          {
+            "key": "sequence_parallel",
+            "value": null
+          },
+          {
+            "key": "attn_backend",
+            "value": "flash"
+          },
+          {
+            "key": "eager_decode",
+            "value": false
+          },
+          {
+            "key": "speculative_draft_tokens",
+            "value": 0
+          },
+          {
+            "key": "mtp_loss_scale",
+            "value": null
+          },
+          {
+            "key": "activation_checkpointing",
+            "value": true
+          },
+          {
+            "key": "keep_rollout_state",
+            "value": true
+          },
+          {
+            "key": "optimizer_state_offload",
+            "value": "none"
+          },
+          {
+            "key": "optimizer_state_offload_dir",
+            "value": null
+          },
+          {
+            "key": "optimizer_state_offload_batch_size",
+            "value": 1
+          },
+          {
+            "key": "chat_template_enable_thinking",
+            "value": null
+          }
+        ]
+      },
+      {
+        "title": "Rollout",
+        "items": [
+          {
+            "key": "batch_size",
+            "value": 32
+          },
+          {
+            "key": "n_samples",
+            "value": 8
+          },
+          {
+            "key": "max_running_prompts",
+            "value": 128
+          },
+          {
+            "key": "max_prompt_tokens",
+            "value": 512
+          },
+          {
+            "key": "max_new_tokens",
+            "value": 2048
+          },
+          {
+            "key": "max_context_len",
+            "value": null
+          },
+          {
+            "key": "greedy",
+            "value": false
+          },
+          {
+            "key": "temperature",
+            "value": 1.0
+          },
+          {
+            "key": "top_k",
+            "value": -1
+          },
+          {
+            "key": "top_p",
+            "value": 1.0
+          },
+          {
+            "key": "agent_fn",
+            "value": null
+          },
+          {
+            "key": "train_tool_results",
+            "value": false
+          },
+          {
+            "key": "reward_fn_path",
+            "value": "examples/math/math_verify_reward.py"
+          },
+          {
+            "key": "resolved_max_running_prompts",
+            "value": 128
+          }
+        ]
+      },
+      {
+        "title": "Train",
+        "items": [
+          {
+            "key": "mini_bs",
+            "value": 16
+          },
+          {
+            "key": "score_micro_bs",
+            "value": 8
+          },
+          {
+            "key": "gradient_accumulation_steps",
+            "value": null
+          }
+        ]
+      },
+      {
+        "title": "Optimizer",
+        "items": [
+          {
+            "key": "optimizer_lr",
+            "value": 1e-06
+          },
+          {
+            "key": "optimizer_min_lr",
+            "value": 1e-07
+          },
+          {
+            "key": "lr_decay_steps",
+            "value": 1000
+          },
+          {
+            "key": "lr_decay_style",
+            "value": "cosine"
+          },
+          {
+            "key": "optimizer_beta1",
+            "value": 0.9
+          },
+          {
+            "key": "optimizer_beta2",
+            "value": 0.999
+          },
+          {
+            "key": "weight_decay",
+            "value": 0.01
+          },
+          {
+            "key": "grad_clip_norm",
+            "value": 1.0
+          },
+          {
+            "key": "adam_8bit",
+            "value": false
+          },
+          {
+            "key": "adam_4bit",
+            "value": false
+          }
+        ]
+      },
+      {
+        "title": "Roles and loss",
+        "items": [
+          {
+            "key": "gspo_clip_eps",
+            "value": 0.0003
+          },
+          {
+            "key": "grpo_clip_eps",
+            "value": 0.2
+          }
+        ]
+      },
+      {
+        "title": "Checkpoint",
+        "items": [
+          {
+            "key": "save_path",
+            "value": "/root/kivi/runs/rl_final/s6_auto/ckpt"
+          },
+          {
+            "key": "save_interval",
+            "value": 50
+          },
+          {
+            "key": "export_gguf_path",
+            "value": null
+          },
+          {
+            "key": "gguf_file_type",
+            "value": "f16"
+          }
+        ]
+      },
+      {
+        "title": "Observability",
+        "items": [
+          {
+            "key": "metrics_log_dir",
+            "value": "/root/kivi/runs/rl_final/s6_auto/tb"
+          }
+        ]
+      },
+      {
+        "title": "Other",
+        "items": [
+          {
+            "key": "backend",
+            "value": "cuda"
+          },
+          {
+            "key": "base_model_name_or_path",
+            "value": "/root/kivi/models/Qwen3-0.6B"
+          },
+          {
+            "key": "mlx_quantize_bits",
+            "value": null
+          },
+          {
+            "key": "mlx_quantize_group_size",
+            "value": 64
+          },
+          {
+            "key": "train_devices",
+            "value": [
+              0
+            ]
+          },
+          {
+            "key": "unfreeze_multimodal_tower",
+            "value": false
+          },
+          {
+            "key": "unfreeze_multimodal_projector",
+            "value": false
+          },
+          {
+            "key": "multimodal_tower_lr",
+            "value": null
+          },
+          {
+            "key": "multimodal_tower_min_lr",
+            "value": null
+          },
+          {
+            "key": "multimodal_tower_lr_decay_steps",
+            "value": null
+          },
+          {
+            "key": "multimodal_tower_lr_decay_style",
+            "value": null
+          },
+          {
+            "key": "multimodal_projector_lr",
+            "value": null
+          },
+          {
+            "key": "multimodal_projector_min_lr",
+            "value": null
+          },
+          {
+            "key": "multimodal_projector_lr_decay_steps",
+            "value": null
+          },
+          {
+            "key": "multimodal_projector_lr_decay_style",
+            "value": null
+          },
+          {
+            "key": "lora",
+            "value": null
+          },
+          {
+            "key": "reference_mode",
+            "value": "independent"
+          },
+          {
+            "key": "rollout_tp_size",
+            "value": null
+          },
+          {
+            "key": "rollout_devices",
+            "value": null
+          },
+          {
+            "key": "policy_sync_bucket_mb",
+            "value": 64
+          }
+        ]
+      }
+    ]
+  }
+}

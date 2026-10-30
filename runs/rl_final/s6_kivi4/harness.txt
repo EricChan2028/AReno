@@ -1,0 +1,1 @@
+train_seeded.py --seed 6 --kv-cache-dtype kivi4 

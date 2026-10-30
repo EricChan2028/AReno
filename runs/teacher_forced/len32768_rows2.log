@@ -1,0 +1,139 @@
+Token indices sequence length is longer than the specified maximum sequence length for this model (298938 > 131072). Running this sequence through the model will result in indexing errors
+loading checkpoint:   0%|          | 0/29 [00:00<?, ?stage/s]loading checkpoint:  52%|█████▏    | 15/29 [00:00<00:00, 140.23stage/s]loading checkpoint: 100%|██████████| 29/29 [00:00<00:00, 138.82stage/s]
+{
+  "model": "/root/kivi/models/Qwen3-0.6B",
+  "text": "/root/kivi/data/wikitext2_test.txt",
+  "rows": 2,
+  "length": 32768,
+  "prefill": 256,
+  "kivi_group_size": 32,
+  "kivi_residual_length": 128,
+  "cache_bytes": {
+    "auto": 7516192768,
+    "kivi2": 1445986304,
+    "kivi4": 2385510400
+  },
+  "decode_seconds": 935.5067744161934,
+  "buckets": {
+    "<1024": {
+      "auto": {
+        "tokens": 1534,
+        "ppl": 12.628961836948013,
+        "kl_vs_auto": 0.0,
+        "top1_agreement_vs_auto": 1.0
+      },
+      "kivi2": {
+        "tokens": 1534,
+        "ppl": 14.184974287217166,
+        "kl_vs_auto": 0.15292801102464923,
+        "top1_agreement_vs_auto": 0.834419817470665
+      },
+      "kivi4": {
+        "tokens": 1534,
+        "ppl": 12.717430109278618,
+        "kl_vs_auto": 0.0058057388406797,
+        "top1_agreement_vs_auto": 0.970664928292047
+      }
+    },
+    "<2048": {
+      "auto": {
+        "tokens": 2048,
+        "ppl": 15.601702488321575,
+        "kl_vs_auto": 0.0,
+        "top1_agreement_vs_auto": 1.0
+      },
+      "kivi2": {
+        "tokens": 2048,
+        "ppl": 17.33584418215254,
+        "kl_vs_auto": 0.14202568265905313,
+        "top1_agreement_vs_auto": 0.8359375
+      },
+      "kivi4": {
+        "tokens": 2048,
+        "ppl": 15.677571256917444,
+        "kl_vs_auto": 0.005949971867169612,
+        "top1_agreement_vs_auto": 0.966796875
+      }
+    },
+    "<4096": {
+      "auto": {
+        "tokens": 4096,
+        "ppl": 18.653860430187,
+        "kl_vs_auto": 0.0,
+        "top1_agreement_vs_auto": 1.0
+      },
+      "kivi2": {
+        "tokens": 4096,
+        "ppl": 19.940382553360028,
+        "kl_vs_auto": 0.12786280262235294,
+        "top1_agreement_vs_auto": 0.823486328125
+      },
+      "kivi4": {
+        "tokens": 4096,
+        "ppl": 18.780621623150903,
+        "kl_vs_auto": 0.0056806077737490135,
+        "top1_agreement_vs_auto": 0.964111328125
+      }
+    },
+    "<8192": {
+      "auto": {
+        "tokens": 8192,
+        "ppl": 19.11034591859338,
+        "kl_vs_auto": 0.0,
+        "top1_agreement_vs_auto": 1.0
+      },
+      "kivi2": {
+        "tokens": 8192,
+        "ppl": 20.791005444854836,
+        "kl_vs_auto": 0.14105409946028646,
+        "top1_agreement_vs_auto": 0.8211669921875
+      },
+      "kivi4": {
+        "tokens": 8192,
+        "ppl": 19.25939982533331,
+        "kl_vs_auto": 0.00535109654008703,
+        "top1_agreement_vs_auto": 0.9598388671875
+      }
+    },
+    "<16384": {
+      "auto": {
+        "tokens": 16384,
+        "ppl": 12.202849925392218,
+        "kl_vs_auto": 0.0,
+        "top1_agreement_vs_auto": 1.0
+      },
+      "kivi2": {
+        "tokens": 16384,
+        "ppl": 13.660325576092733,
+        "kl_vs_auto": 0.17329601054629573,
+        "top1_agreement_vs_auto": 0.8126220703125
+      },
+      "kivi4": {
+        "tokens": 16384,
+        "ppl": 12.294518581066185,
+        "kl_vs_auto": 0.005866915790838735,
+        "top1_agreement_vs_auto": 0.9625244140625
+      }
+    },
+    "<32768": {
+      "auto": {
+        "tokens": 32768,
+        "ppl": 19.05269202658036,
+        "kl_vs_auto": 0.0,
+        "top1_agreement_vs_auto": 1.0
+      },
+      "kivi2": {
+        "tokens": 32768,
+        "ppl": 23.728669870736574,
+        "kl_vs_auto": 0.3223595711891536,
+        "top1_agreement_vs_auto": 0.73785400390625
+      },
+      "kivi4": {
+        "tokens": 32768,
+        "ppl": 19.236276770405944,
+        "kl_vs_auto": 0.006807139592618918,
+        "top1_agreement_vs_auto": 0.9571533203125
+      }
+    }
+  }
+}

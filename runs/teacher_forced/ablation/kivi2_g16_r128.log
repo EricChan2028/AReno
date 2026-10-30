@@ -1,0 +1,65 @@
+Token indices sequence length is longer than the specified maximum sequence length for this model (298938 > 131072). Running this sequence through the model will result in indexing errors
+loading checkpoint:   0%|          | 0/29 [00:00<?, ?stage/s]loading checkpoint:  59%|█████▊    | 17/29 [00:00<00:00, 161.79stage/s]loading checkpoint: 100%|██████████| 29/29 [00:00<00:00, 158.51stage/s]
+Traceback (most recent call last):
+  File "/root/kivi/wt/eval_5706d51/examples/kivi/teacher_forced_eval.py", line 206, in <module>
+    main()
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/eval_5706d51/examples/kivi/teacher_forced_eval.py", line 168, in main
+    logits = model(step_ids, step_pos, infer_meta=meta).logits_shard.view(rows, -1).float()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/eval_5706d51/areno/models/qwen3/model.py", line 402, in forward
+    hidden_states = checkpoint_layer(
+                    ^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/_dynamo/external_utils.py", line 198, in nonrecursive_disable_wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/eval_5706d51/areno/engine/runtime/recompute.py", line 69, in checkpoint_layer
+    return layer_fn(hidden_states, *args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/eval_5706d51/areno/models/qwen3/model.py", line 79, in forward
+    hidden_states = residual + self.self_attn(hidden_states, position_ids, train_meta, infer_meta)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/eval_5706d51/areno/engine/layers/attention.py", line 109, in forward
+    return self.forward_infer(q, k, v, infer_meta)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/eval_5706d51/areno/engine/layers/attention.py", line 140, in forward_infer
+    out = self.kivi_backend(q, k, v, self.kivi_cache, infer_meta)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/_dynamo/eval_frame.py", line 929, in _fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/eval_5706d51/areno/engine/layers/attention_backend/kivi.py", line 359, in forward
+    out = self._decode(q_flat, k_flat, v_flat, cache, meta, scale)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/eval_5706d51/areno/engine/layers/attention_backend/kivi.py", line 491, in _decode
+    return decode_attention(
+           ^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/eval_5706d51/areno/accel/kernels/kivi.py", line 637, in decode_attention
+    raise ValueError(f"block_n {block_n} must be >= 16 and divide the KIVI group size {group_size}")
+ValueError: block_n 32 must be >= 16 and divide the KIVI group size 16

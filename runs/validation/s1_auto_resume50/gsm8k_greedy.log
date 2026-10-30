@@ -1,0 +1,42 @@
+loading checkpoint:   0%|          | 0/29 [00:00<?, ?stage/s]loading checkpoint:  21%|██        | 6/29 [00:00<00:00, 49.62stage/s]loading checkpoint:  38%|███▊      | 11/29 [00:00<00:00, 34.23stage/s]loading checkpoint:  52%|█████▏    | 15/29 [00:00<00:00, 34.04stage/s]loading checkpoint:  66%|██████▌   | 19/29 [00:00<00:00, 31.68stage/s]loading checkpoint:  79%|███████▉  | 23/29 [00:00<00:00, 30.99stage/s]loading checkpoint:  93%|█████████▎| 27/29 [00:00<00:00, 30.85stage/s]loading checkpoint: 100%|██████████| 29/29 [00:00<00:00, 31.71stage/s]
+2026-10-30 05:53:39 INFO areno.engine.inference inference.py:1691 - decode CUDA graphs ready: decode=14 verify=0 draft=0 skipped_buckets=0 free_gib=31.97
+2026-10-30 05:53:50 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=10726.2
+2026-10-30 05:54:00 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=8021.5
+2026-10-30 05:54:10 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7454.3
+2026-10-30 05:54:20 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7952.6
+2026-10-30 05:54:30 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7978.8
+2026-10-30 05:54:40 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7711.6
+2026-10-30 05:54:50 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7714.1
+2026-10-30 05:55:00 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7941.4
+2026-10-30 05:55:10 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7690.4
+2026-10-30 05:55:20 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7766.1
+2026-10-30 05:55:30 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7679.1
+2026-10-30 05:55:40 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7857.5
+2026-10-30 05:55:50 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7736.6
+2026-10-30 05:56:00 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7383.3
+2026-10-30 05:56:10 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7536.0
+2026-10-30 05:56:20 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7327.4
+2026-10-30 05:56:30 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7457.2
+2026-10-30 05:56:40 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=128 cuda_graph=True tokens_per_second=7873.0
+2026-10-30 05:56:50 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=89 cuda_graph=True tokens_per_second=7456.3
+2026-10-30 05:57:00 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=6 cuda_graph=True tokens_per_second=4425.7
+{
+  "kv_cache_dtype": "auto",
+  "runtime": {
+    "attn_backend": "flash",
+    "kv_cache_dtype": "auto"
+  },
+  "prompts": 1319,
+  "samples_per_prompt": 1,
+  "temperature": 0.0,
+  "seed": null,
+  "accuracy": 0.759666413949962,
+  "accuracy_stderr": 0.011765118303409762,
+  "generated_tokens": 1541663,
+  "mean_response_tokens": 1168.8119787717967,
+  "rollout_seconds": 208.47757547162473,
+  "generated_tokens_per_s": 7394.862476275446,
+  "max_new_tokens": 2048,
+  "max_running_prompts": 128
+}
+exit=0

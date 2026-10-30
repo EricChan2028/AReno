@@ -1,0 +1,1 @@
+/root/kivi/runs/rl_final/s1_kivi2_resume50/ckpt/step_000050

@@ -1,0 +1,35 @@
+loading checkpoint:   0%|          | 0/29 [00:00<?, ?stage/s]loading checkpoint:  62%|██████▏   | 18/29 [00:00<00:00, 170.46stage/s]loading checkpoint: 100%|██████████| 29/29 [00:00<00:00, 170.34stage/s]
+2026-10-30 03:08:53 INFO areno.engine.inference inference.py:1691 - decode CUDA graphs ready: decode=17 verify=0 draft=0 skipped_buckets=0 free_gib=31.14
+2026-10-30 03:09:03 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=512 cuda_graph=True tokens_per_second=18848.7
+2026-10-30 03:09:13 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=512 cuda_graph=True tokens_per_second=14208.4
+2026-10-30 03:09:23 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=512 cuda_graph=True tokens_per_second=12121.9
+2026-10-30 03:09:33 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=512 cuda_graph=True tokens_per_second=11567.4
+2026-10-30 03:09:43 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=512 cuda_graph=True tokens_per_second=11340.6
+2026-10-30 03:09:53 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=512 cuda_graph=True tokens_per_second=10738.3
+2026-10-30 03:10:03 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=512 cuda_graph=True tokens_per_second=10786.7
+2026-10-30 03:10:13 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=481 cuda_graph=True tokens_per_second=10426.7
+2026-10-30 03:10:23 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=278 cuda_graph=True tokens_per_second=9986.7
+2026-10-30 03:10:33 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=187 cuda_graph=True tokens_per_second=8710.3
+2026-10-30 03:10:43 INFO areno.engine.inference inference.py:937 - rollout decode progress: dp=0/1 active=94 cuda_graph=True tokens_per_second=7220.5
+{
+  "kv_cache_dtype": "kivi2",
+  "runtime": {
+    "attn_backend": "flash",
+    "kv_cache_dtype": "kivi2",
+    "kivi_group_size": 32,
+    "kivi_residual_length": 128
+  },
+  "prompts": 1024,
+  "samples_per_prompt": 1,
+  "temperature": 0.0,
+  "seed": null,
+  "accuracy": 0.6982421875,
+  "accuracy_stderr": 0.014344397966546758,
+  "generated_tokens": 1295938,
+  "mean_response_tokens": 1265.564453125,
+  "rollout_seconds": 126.21138204447925,
+  "generated_tokens_per_s": 10267.99626949087,
+  "max_new_tokens": 2048,
+  "max_running_prompts": 512
+}
+exit=0

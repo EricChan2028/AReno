@@ -1,0 +1,80 @@
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (250758 > 131072). Running this sequence through the model will result in indexing errors
+loading checkpoint:   0%|          | 0/29 [00:00<?, ?stage/s]loading checkpoint: 100%|██████████| 29/29 [00:00<00:00, 297.43stage/s]
+{
+  "model": "/root/kivi/runs/rl_final/s3_kivi2_r512/ckpt/step_000100",
+  "text": "/root/kivi/data/gsm8k_test_solutions.txt",
+  "rows": 8,
+  "length": 4096,
+  "prefill": 256,
+  "kivi_group_size": 32,
+  "kivi_residual_length": 128,
+  "cache_bytes": {
+    "auto": 3758096384,
+    "kivi2": 851443712,
+    "kivi4": 1321205760
+  },
+  "decode_seconds": 104.92895234376192,
+  "buckets": {
+    "<1024": {
+      "auto": {
+        "tokens": 6136,
+        "ppl": 3.2736845167796846,
+        "kl_vs_auto": 0.0,
+        "top1_agreement_vs_auto": 1.0
+      },
+      "kivi2": {
+        "tokens": 6136,
+        "ppl": 3.450559310213508,
+        "kl_vs_auto": 0.09164530217463596,
+        "top1_agreement_vs_auto": 0.9077574967405476
+      },
+      "kivi4": {
+        "tokens": 6136,
+        "ppl": 3.2761584719115198,
+        "kl_vs_auto": 0.003835428885358472,
+        "top1_agreement_vs_auto": 0.9814211212516297
+      }
+    },
+    "<2048": {
+      "auto": {
+        "tokens": 8192,
+        "ppl": 3.378154714779761,
+        "kl_vs_auto": 0.0,
+        "top1_agreement_vs_auto": 1.0
+      },
+      "kivi2": {
+        "tokens": 8192,
+        "ppl": 3.551322643885145,
+        "kl_vs_auto": 0.08424708697771166,
+        "top1_agreement_vs_auto": 0.9007568359375
+      },
+      "kivi4": {
+        "tokens": 8192,
+        "ppl": 3.38354182334085,
+        "kl_vs_auto": 0.003459774308851138,
+        "top1_agreement_vs_auto": 0.980224609375
+      }
+    },
+    "<4096": {
+      "auto": {
+        "tokens": 16384,
+        "ppl": 3.2314509653125048,
+        "kl_vs_auto": 0.0,
+        "top1_agreement_vs_auto": 1.0
+      },
+      "kivi2": {
+        "tokens": 16384,
+        "ppl": 3.3487246420931838,
+        "kl_vs_auto": 0.0819934560517055,
+        "top1_agreement_vs_auto": 0.9052734375
+      },
+      "kivi4": {
+        "tokens": 16384,
+        "ppl": 3.2404714389854767,
+        "kl_vs_auto": 0.0031830615831376363,
+        "top1_agreement_vs_auto": 0.98175048828125
+      }
+    }
+  }
+}
+exit=0

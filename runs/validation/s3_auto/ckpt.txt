@@ -1,0 +1,1 @@
+/root/kivi/runs/rl_final/s3_auto/ckpt/step_000100

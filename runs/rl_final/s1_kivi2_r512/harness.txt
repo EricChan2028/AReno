@@ -1,0 +1,1 @@
+train_seeded.py --seed 1 --kv-cache-dtype kivi2 --kivi-residual-length 512

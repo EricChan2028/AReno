@@ -1,0 +1,4 @@
+flash_attn==2.8.3
+torch==2.8.0+cu128
+transformers==5.22.0
+triton==3.4.0

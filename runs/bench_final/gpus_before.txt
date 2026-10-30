@@ -1,0 +1,7 @@
+index, name, memory.used [MiB], utilization.gpu [%]
+0, NVIDIA RTX PRO 5000 72GB Blackwell, 0 MiB, 0 %
+1, NVIDIA RTX PRO 5000 72GB Blackwell, 42968 MiB, 86 %
+2, NVIDIA RTX PRO 5000 72GB Blackwell, 42968 MiB, 84 %
+3, NVIDIA RTX PRO 5000 72GB Blackwell, 42968 MiB, 95 %
+4, NVIDIA RTX PRO 5000 72GB Blackwell, 42968 MiB, 85 %
+5, NVIDIA RTX PRO 5000 72GB Blackwell, 42968 MiB, 98 %

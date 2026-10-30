@@ -1,0 +1,117 @@
+{
+  "model": "/root/kivi/models/Qwen3-0.6B",
+  "text": "/root/kivi/data/wikitext2_test.txt",
+  "rows": 4,
+  "length": 16384,
+  "prefill": 256,
+  "kivi_group_size": 32,
+  "kivi_residual_length": 128,
+  "cache_bytes": {
+    "auto": 7516192768,
+    "kivi2": 1482686464,
+    "kivi4": 2422210560
+  },
+  "decode_seconds": 468.2477566283196,
+  "buckets": {
+    "<1024": {
+      "auto": {
+        "tokens": 3068,
+        "ppl": 15.355068692366444,
+        "kl_vs_auto": 0.0,
+        "top1_agreement_vs_auto": 1.0
+      },
+      "kivi2": {
+        "tokens": 3068,
+        "ppl": 16.659221360294197,
+        "kl_vs_auto": 0.12778264932781264,
+        "top1_agreement_vs_auto": 0.8311603650586702
+      },
+      "kivi4": {
+        "tokens": 3068,
+        "ppl": 15.425420698975435,
+        "kl_vs_auto": 0.004804881329481542,
+        "top1_agreement_vs_auto": 0.9677314211212517
+      }
+    },
+    "<2048": {
+      "auto": {
+        "tokens": 4096,
+        "ppl": 25.206104600194607,
+        "kl_vs_auto": 0.0,
+        "top1_agreement_vs_auto": 1.0
+      },
+      "kivi2": {
+        "tokens": 4096,
+        "ppl": 27.04009784260023,
+        "kl_vs_auto": 0.13857868678405794,
+        "top1_agreement_vs_auto": 0.8193359375
+      },
+      "kivi4": {
+        "tokens": 4096,
+        "ppl": 25.342657426607584,
+        "kl_vs_auto": 0.0053676095875623275,
+        "top1_agreement_vs_auto": 0.959228515625
+      }
+    },
+    "<4096": {
+      "auto": {
+        "tokens": 8192,
+        "ppl": 23.769849078304183,
+        "kl_vs_auto": 0.0,
+        "top1_agreement_vs_auto": 1.0
+      },
+      "kivi2": {
+        "tokens": 8192,
+        "ppl": 25.56597437069656,
+        "kl_vs_auto": 0.14600530114341836,
+        "top1_agreement_vs_auto": 0.8076171875
+      },
+      "kivi4": {
+        "tokens": 8192,
+        "ppl": 23.836585911419988,
+        "kl_vs_auto": 0.005527633387705677,
+        "top1_agreement_vs_auto": 0.962890625
+      }
+    },
+    "<8192": {
+      "auto": {
+        "tokens": 16384,
+        "ppl": 22.851618266279242,
+        "kl_vs_auto": 0.0,
+        "top1_agreement_vs_auto": 1.0
+      },
+      "kivi2": {
+        "tokens": 16384,
+        "ppl": 25.009422741840993,
+        "kl_vs_auto": 0.15971755305031365,
+        "top1_agreement_vs_auto": 0.80029296875
+      },
+      "kivi4": {
+        "tokens": 16384,
+        "ppl": 22.91130020988338,
+        "kl_vs_auto": 0.00571382052237368,
+        "top1_agreement_vs_auto": 0.95733642578125
+      }
+    },
+    "<16384": {
+      "auto": {
+        "tokens": 32768,
+        "ppl": 16.143398111102094,
+        "kl_vs_auto": 0.0,
+        "top1_agreement_vs_auto": 1.0
+      },
+      "kivi2": {
+        "tokens": 32768,
+        "ppl": 18.03463798987596,
+        "kl_vs_auto": 0.1787497294161824,
+        "top1_agreement_vs_auto": 0.80328369140625
+      },
+      "kivi4": {
+        "tokens": 32768,
+        "ppl": 16.186668222645658,
+        "kl_vs_auto": 0.0058829069763308706,
+        "top1_agreement_vs_auto": 0.9600830078125
+      }
+    }
+  }
+}

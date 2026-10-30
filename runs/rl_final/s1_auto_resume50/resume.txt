@@ -1,0 +1,1 @@
+resumed from /root/kivi/runs/from_server1/s1_auto/ckpt/step_000050 at step 50 after 1600 prompts

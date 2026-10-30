@@ -1,0 +1,66 @@
+AReno training config
+
+Algorithm
+---------
+  name              gspo
+  default_loss      gspo_loss_fn
+  requires_rollout  yes
+
+Inputs
+------
+  ckpt            /root/kivi/models/Qwen3-0.6B
+  dataset_path    /root/kivi/data/gsm8k_main_train
+  model_hub       modelscope
+  dataset_loader  examples/math/dataset_loader.py
+  reward_fn       examples/math/math_verify_reward.py
+  reward_ckpt     none
+  agent_fn        none
+
+Runtime
+-------
+  world_size    1
+  tp_size       1
+  dp_size       1
+  devices       0
+  attn_backend  flash
+  thinking      tokenizer default
+
+Rollout
+-------
+  batch_size           32
+  max_prompt_tokens    512
+  max_new_tokens       2048
+  max_context_len      model limit
+  topology             shared with train engine
+  policy_sync          shared weights
+  n_samples            8
+  max_running_prompts  128
+  sampling             greedy=no, temperature=1.0, top_k=-1, top_p=1.0
+
+Training
+--------
+  max_steps                           100
+  sequence_parallel                   model config (resolved at load)
+  mini_bs                             16
+  score_micro_bs                      8
+  gradient_accumulation_steps         auto
+  qlora                               no
+  lora_rank                           disabled
+  lora_alpha                          n/a
+  lora_dropout                        n/a
+  lora_target_modules                 n/a
+  lora_adapter_path                   n/a
+  optimizer                           lr=1e-06, min_lr=1e-07, decay=cosine/1000, betas=(0.9, 0.999),
+                                      weight_decay=0.01, adam_8bit=no, adam_4bit=no
+  optimizer_state_offload             none
+  optimizer_state_offload_dir         none
+  optimizer_state_offload_batch_size  1
+  grad_clip_norm                      1.0
+
+Outputs
+-------
+  save_path        /root/kivi/runs/rl_final/s6_kivi4/ckpt
+  save_interval    50
+  export_gguf      none
+  gguf_file_type   disabled
+  metrics_log_dir  /root/kivi/runs/rl_final/s6_kivi4/tb

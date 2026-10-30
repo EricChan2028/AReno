@@ -1,0 +1,87 @@
+loading checkpoint:   0%|          | 0/29 [00:00<?, ?stage/s]loading checkpoint:  69%|██████▉   | 20/29 [00:00<00:00, 197.65stage/s]loading checkpoint: 100%|██████████| 29/29 [00:00<00:00, 195.82stage/s]
+Traceback (most recent call last):
+  File "/root/kivi/wt/exp_390ac48/examples/kivi/rollout_eval.py", line 53, in _rollout
+    return await trainer.rollout_token_batch_async(prompt_tokens, n_samples, sampling_params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/exp_390ac48/areno/api/trainer.py", line 387, in rollout_token_batch_async
+    return await rollout_async(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/exp_390ac48/areno/api/backend/cuda/backend.py", line 469, in rollout_batch_async
+    rollout = await engine.generate_rollout_async(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/exp_390ac48/areno/engine/api.py", line 406, in generate_rollout_async
+    return await self._generate_rollout_async_once(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/exp_390ac48/areno/engine/api.py", line 482, in _generate_rollout_async_once
+    results = await self.cluster.call_async(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/exp_390ac48/areno/engine/protocol.py", line 467, in call_async
+    return await asyncio.wait_for(future, timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/tasks.py", line 520, in wait_for
+    return await fut
+           ^^^^^^^^^
+RuntimeError: rank 0 failed during Op.INFER_ROLLOUT:
+Traceback (most recent call last):
+  File "/root/kivi/wt/exp_390ac48/areno/engine/protocol.py", line 683, in _worker_entry
+    for request_id, payload in worker.run_rollout_command(cmd):
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/exp_390ac48/areno/engine/worker.py", line 320, in run_rollout_command
+    return self.run_continuous_rollout_payload(payload, request_ids, counts)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/exp_390ac48/areno/engine/worker.py", line 437, in run_continuous_rollout_payload
+    output = self.infer_rollout(payload, finished_callback=send_finished, refill_callback=refill_waiting)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/exp_390ac48/areno/engine/worker.py", line 281, in infer_rollout
+    output = self.inference.infer_rollout(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/exp_390ac48/areno/engine/inference.py", line 356, in infer_rollout
+    self._init_infer_cache(
+  File "/root/kivi/wt/exp_390ac48/areno/engine/inference.py", line 273, in _init_infer_cache
+    caches = self.model.allocate_kv_caches(self._infer_cache_blocks, block_size, self.device)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/exp_390ac48/areno/models/qwen3/model.py", line 464, in allocate_kv_caches
+    v_cache = torch.empty(
+              ^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1.38 GiB. GPU 0 has a total capacity of 71.12 GiB of which 777.25 MiB is free. Including non-PyTorch memory, this process has 70.36 GiB memory in use. Of the allocated memory 69.89 GiB is allocated by PyTorch, and 87.75 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/root/kivi/wt/exp_390ac48/examples/kivi/rollout_eval.py", line 155, in <module>
+    main()
+  File "/root/kivi/wt/exp_390ac48/examples/kivi/rollout_eval.py", line 92, in main
+    results = asyncio.run(
+              ^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/exp_390ac48/examples/kivi/rollout_eval.py", line 50, in _rollout
+    async with trainer.rollout_session(
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/kivi/wt/exp_390ac48/areno/api/agentic.py", line 333, in __aexit__
+    await self._trainer.end_rollout_session_async()
+  File "/root/kivi/wt/exp_390ac48/areno/api/trainer.py", line 222, in end_rollout_session_async
+    await self._backend.end_rollout_session_async(self._ctx)
+  File "/root/kivi/wt/exp_390ac48/areno/api/backend/cuda/backend.py", line 443, in end_rollout_session_async
+    await self._require_rollout_engine().end_rollout_session_async()
+  File "/root/kivi/wt/exp_390ac48/areno/engine/api.py", line 211, in end_rollout_session_async
+    await self.cluster.call_async(Op.ROLLOUT_SESSION_END)
+  File "/root/kivi/wt/exp_390ac48/areno/engine/protocol.py", line 467, in call_async
+    return await asyncio.wait_for(future, timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/tasks.py", line 520, in wait_for
+    return await fut
+           ^^^^^^^^^
+RuntimeError: worker exited without reporting result during Op.ROLLOUT_SESSION_END: rank 0 pid 1014582 exitcode 0
+exit=1

@@ -1,0 +1,1 @@
+Launched as kv_cache_dtype=kivi2 through train_seeded.py before 5c49afe; the override did not reach RolloutTrainerConfig.cuda_config, so this run used the BF16 cache with seed 3.

@@ -1,0 +1,22 @@
+{
+  "prompts": 512,
+  "accuracy_baseline": 0.70703125,
+  "accuracy_candidate": 0.705078125,
+  "accuracy_delta": -0.001953125,
+  "identical_response_rate": 0.00390625,
+  "agreed_token_fraction": 0.08333087305174086,
+  "mean_first_divergence_token": 70.61372549019607,
+  "logprob_abs_diff_mean_on_agreed_prefix": 0.015432550014811584,
+  "logprob_abs_diff_by_absolute_position": {
+    "<8192": {
+      "tokens": 28656,
+      "mean_abs_diff": 0.014661072486609071
+    },
+    "<16384": {
+      "tokens": 8037,
+      "mean_abs_diff": 0.018183260484908786
+    }
+  },
+  "mean_response_tokens_baseline": 860.017578125,
+  "mean_response_tokens_candidate": 843.890625
+}
