@@ -1,0 +1,6 @@
+tests/test_npu_library_attention.py
+tests/test_npu_linear.py
+tests/test_npu_linear_attention.py
+tests/test_npu_normalization.py
+tests/test_npu_optimizer.py
+tests/test_npu_optimizer_distributed.py

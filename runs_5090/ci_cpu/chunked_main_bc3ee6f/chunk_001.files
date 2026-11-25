@@ -1,0 +1,6 @@
+tests/dashboard_flow/test_catalog_cpu.py
+tests/dashboard_flow/test_credentials_cpu.py
+tests/dashboard_flow/test_dataset_cache_cpu.py
+tests/dashboard_flow/test_gpu_estimate_cpu.py
+tests/dashboard_flow/test_inference_cpu.py
+tests/dashboard_flow/test_library_cpu.py

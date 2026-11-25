@@ -1,0 +1,6 @@
+tests/test_recompute_cpu.py
+tests/test_registry_cpu.py
+tests/test_registry_discovery_cpu.py
+tests/test_routing.py
+tests/test_routing_common_cpu.py
+tests/test_routing_replay_cpu.py

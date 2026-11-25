@@ -1,0 +1,6 @@
+tests/test_setup_guardrails_cpu.py
+tests/test_sft_example_cpu.py
+tests/test_sgl_jev_dense_cpu.py
+tests/test_speculative_cpu.py
+tests/test_speculative_rollout_cpu.py
+tests/test_svg_accuracy_reward_cpu.py

@@ -1,0 +1,116 @@
+{
+  "window": 8,
+  "arms": {
+    "auto": {
+      "seeds": [
+        {
+          "run": "/root/kivi590/runs_5090/rl_s1_auto",
+          "steps": 8,
+          "final_window_reward": 0.76953125,
+          "mean_reward": 0.76953125,
+          "reward_curve": [
+            0.6875,
+            0.75,
+            0.828125,
+            0.734375,
+            0.859375,
+            0.78125,
+            0.8125,
+            0.703125
+          ],
+          "logp_abs_diff_mean": 0.0,
+          "median_time/rollout": 41.78143119812012,
+          "median_time/train": 30.12380599975586,
+          "median_train/step_e2e_time_s": 73.68695068359375
+        }
+      ],
+      "final_window_reward_mean": 0.76953125,
+      "final_window_reward_std": null,
+      "logp_abs_diff_mean": 0.0
+    },
+    "kivi4": {
+      "seeds": [
+        {
+          "run": "/root/kivi590/runs_5090/rl_s1_kivi4",
+          "steps": 8,
+          "final_window_reward": 0.734375,
+          "mean_reward": 0.734375,
+          "reward_curve": [
+            0.640625,
+            0.671875,
+            0.90625,
+            0.734375,
+            0.828125,
+            0.78125,
+            0.71875,
+            0.59375
+          ],
+          "logp_abs_diff_mean": 0.03190929000265896,
+          "median_time/rollout": 42.6048526763916,
+          "median_time/train": 32.135398864746094,
+          "median_train/step_e2e_time_s": 74.44829940795898
+        }
+      ],
+      "final_window_reward_mean": 0.734375,
+      "final_window_reward_std": null,
+      "logp_abs_diff_mean": 0.03190929000265896,
+      "final_window_reward_delta_vs_baseline": -0.03515625
+    },
+    "kivi2": {
+      "seeds": [
+        {
+          "run": "/root/kivi590/runs_5090/rl_s1_kivi2",
+          "steps": 8,
+          "final_window_reward": 0.724609375,
+          "mean_reward": 0.724609375,
+          "reward_curve": [
+            0.65625,
+            0.65625,
+            0.796875,
+            0.75,
+            0.71875,
+            0.78125,
+            0.78125,
+            0.65625
+          ],
+          "logp_abs_diff_mean": 0.19334258325397968,
+          "median_time/rollout": 43.787649154663086,
+          "median_time/train": 31.30182647705078,
+          "median_train/step_e2e_time_s": 75.70706939697266
+        }
+      ],
+      "final_window_reward_mean": 0.724609375,
+      "final_window_reward_std": null,
+      "logp_abs_diff_mean": 0.19334258325397968,
+      "final_window_reward_delta_vs_baseline": -0.044921875
+    },
+    "kivi2_r512": {
+      "seeds": [
+        {
+          "run": "/root/kivi590/runs_5090/rl_s1_kivi2_r512",
+          "steps": 8,
+          "final_window_reward": 0.765625,
+          "mean_reward": 0.765625,
+          "reward_curve": [
+            0.71875,
+            0.765625,
+            0.859375,
+            0.671875,
+            0.890625,
+            0.75,
+            0.828125,
+            0.640625
+          ],
+          "logp_abs_diff_mean": 0.11539904866367579,
+          "median_time/rollout": 43.45335388183594,
+          "median_time/train": 28.20326519012451,
+          "median_train/step_e2e_time_s": 72.02810668945312
+        }
+      ],
+      "final_window_reward_mean": 0.765625,
+      "final_window_reward_std": null,
+      "logp_abs_diff_mean": 0.11539904866367579,
+      "final_window_reward_delta_vs_baseline": -0.00390625
+    }
+  }
+}

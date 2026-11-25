@@ -1,0 +1,1 @@
+timeout 2400 bash -c cd\ /root/kivi590/AReno-main\ \&\&\ PYTHONPATH=/root/kivi590/AReno-main\ exec\ python\ -m\ pytest\ -q\ -p\ no:cacheprovider\ -rfEs\ tests/test_native_attention_gpu.py\ tests/test_cuda_phase_memory_gpu.py\ tests/test_logprobs_cuda.py 

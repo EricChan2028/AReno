@@ -1,0 +1,6 @@
+tests/test_materialization_equivalence_cpu.py
+tests/test_metrics_cpu.py
+tests/test_minicpmv46_multimodal_cpu.py
+tests/test_mlx_bailing_v3_lora_cpu.py
+tests/test_mlx_bailing_v3_lora_e2e.py
+tests/test_mlx_gated_delta_cpu.py

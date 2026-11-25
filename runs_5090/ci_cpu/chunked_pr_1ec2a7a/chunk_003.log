@@ -1,0 +1,55 @@
+........................................................................ [ 46%]
+..............................................................F......... [ 92%]
+............                                                             [100%]
+=================================== FAILURES ===================================
+_________ test_real_gloo_factored_statistics_match_unsharded_reference _________
+
+    def test_real_gloo_factored_statistics_match_unsharded_reference() -> None:
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        port = _free_port()
+        processes = [spawn.Process(target=_gloo_factored_worker, args=(rank, port, output_queue)) for rank in range(2)]
+        for process in processes:
+            process.start()
+        try:
+>           results = dict((item[0], item[1:]) for item in (output_queue.get(timeout=30) for _ in processes))
+
+tests/test_adamw_4bit_cpu.py:444: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_adamw_4bit_cpu.py:444: in <genexpr>
+    results = dict((item[0], item[1:]) for item in (output_queue.get(timeout=30) for _ in processes))
+tests/test_adamw_4bit_cpu.py:444: in <genexpr>
+    results = dict((item[0], item[1:]) for item in (output_queue.get(timeout=30) for _ in processes))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <multiprocessing.queues.Queue object at 0x734a909f3820>, block = True
+timeout = 29.999988020999808
+
+    def get(self, block=True, timeout=None):
+        if self._closed:
+            raise ValueError(f"Queue {self!r} is closed")
+        if block and timeout is None:
+            with self._rlock:
+                res = self._recv_bytes()
+            self._sem.release()
+        else:
+            if block:
+                deadline = time.monotonic() + timeout
+            if not self._rlock.acquire(block, timeout):
+                raise Empty
+            try:
+                if block:
+                    timeout = deadline - time.monotonic()
+                    if not self._poll(timeout):
+>                       raise Empty
+E                       _queue.Empty
+
+/usr/lib/python3.10/multiprocessing/queues.py:114: Empty
+----------------------------- Captured stdout call -----------------------------
+.................................................................................... [ 46%]
+.......................................................................................... [ 46%]
+......................................................
+=========================== short test summary info ============================
+FAILED tests/test_adamw_4bit_cpu.py::test_real_gloo_factored_statistics_match_unsharded_reference
+1 failed, 155 passed in 81.04s (0:01:21)
+PEAK_RSS_MIB 1377

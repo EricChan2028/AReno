@@ -1,0 +1,21 @@
+2026-11-25 09:00:40 download phase start
+2026-11-25 09:21:49 download phase start (retry 2)
+2026-11-25 09:22:16 download phase start (retry 2)
+2026-11-25 09:23:14 assets phase start (GSM8K + WikiText-2 only)
+2026-11-25 09:24:29 MODEL_DONE: copied from /root/galore593/models/Qwen3-0.6B, SHA256SUMS.txt OK, model.safetensors = report hash
+2026-11-25 09:27:17 assets phase start (GSM8K + WikiText-2 only)
+2026-11-25 09:27:19 FAILED: modelscope/datasets
+2026-11-25 09:27:46 assets phase start (GSM8K + WikiText-2 only)
+2026-11-25 09:28:24 FAILED: GSM8K
+2026-11-25 09:29:04 assets phase start (GSM8K + WikiText-2 only)
+2026-11-25 09:29:22 FAILED: GSM8K
+2026-11-25 09:29:56 assets phase start (GSM8K + WikiText-2 only)
+5f1bea067869d04849c0f975a2b29c4ff47d867f484f5010ea5e861eab246d91  data/wikitext2_raw_test.parquet
+bbf94c53a05abe9ee670d3b6343608095822c85e26de37c70b24fc571964574a  data/wikitext2_test.txt
+45965b000311d1550e5619b60b5bf31cf76edebfd8b8eddc62a876fbf8c9be95  data/gsm8k_main_test/data-00000-of-00001.arrow
+6146bca074f4c6c5e07de7e96cc968adab3833dbdafeda21830f27558eea3d9b  data/gsm8k_main_train/data-00000-of-00001.arrow
+2026-11-25 09:30:06 ASSETS_DONE
+2026-11-25 10:01:51 wheelhouse /root/actc591/wheelhouse verified (19 files)
+2026-11-25 10:03:13 torch: 2.9.1+cu128 12.8 triton 3.5.1
+No broken requirements found.
+2026-11-25 10:03:52 WHEELS_DONE

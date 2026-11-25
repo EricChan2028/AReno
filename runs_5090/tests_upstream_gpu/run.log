@@ -1,0 +1,189 @@
+.s.s........s.s.s........................FF.......................       [100%]
+=================================== FAILURES ===================================
+_______________ test_native_delta_packed_gradients[dtype1-False] _______________
+
+kda = False, dtype = torch.bfloat16
+
+    @pytest.mark.parametrize("kda", [False, True])
+    @pytest.mark.parametrize("dtype", [torch.float32, torch.bfloat16])
+    def test_native_delta_packed_gradients(kda, dtype):
+        from areno.accel.native_delta import _differentiable_block, _TrainDelta
+    
+        torch.manual_seed(91)
+        n, h, d = 39, 4, 32
+    
+        def random(*shape):
+            return torch.randn(*shape, device="cuda", requires_grad=True)
+    
+        q, k, v, a, b, decay, bias = xs = [
+            random(*shape)
+            for shape in [
+                (1, n, 4 if kda else 2, d),
+                (1, n, 4 if kda else 2, d),
+                (1, n, h, d),
+                (1, n, h, d) if kda else (1, n, h),
+                (1, n, h),
+                (h,),
+                (h * d if kda else h,),
+            ]
+        ]
+        if dtype == torch.bfloat16:
+            q, k, v, a, b = [x.detach().to(dtype).requires_grad_() for x in xs[:5]]
+            xs = [q, k, v, a, b, decay, bias]
+        bound = -5 if kda else None
+        cu = torch.tensor([0, 4, n], device=q.device, dtype=torch.int32)
+        out = _TrainDelta.apply(*xs, cu, bound)
+        ref = []
+        for lo, hi in [(0, 4), (4, n)]:
+            y, _ = _differentiable_block(*(x[0, lo:hi] for x in xs[:5]), decay, bias, v.new_zeros(h, d, d), bound)
+            ref.append(y)
+        ref = torch.cat(ref)[None]
+        g = torch.randn_like(out)
+        torch.testing.assert_close(
+            out.float(),
+            ref.float(),
+            atol=0.008 if dtype == torch.bfloat16 else 1e-5,
+            rtol=0.008 if dtype == torch.bfloat16 else 1e-4,
+        )
+>       for got, want in zip(torch.autograd.grad(out, xs, g), torch.autograd.grad(ref, xs, g.float()), strict=True):
+
+tests/test_native_attention_gpu.py:592: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../venv-gpu/lib/python3.10/site-packages/torch/autograd/__init__.py:503: in grad
+    result = _engine_run_backward(
+../venv-gpu/lib/python3.10/site-packages/torch/autograd/graph.py:841: in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+../venv-gpu/lib/python3.10/site-packages/torch/autograd/function.py:315: in apply
+    return user_fn(self, *args)
+areno/accel/native_delta.py:93: in backward
+    out, _ = _fla_chunk_gated_delta_rule_no_compile(
+../venv-gpu/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py:1044: in _fn
+    return fn(*args, **kwargs)
+areno/models/_shared/dynamo_wrappers.py:69: in _fla_chunk_gated_delta_rule_no_compile
+    _require_fla_gdn()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _require_fla_gdn() -> None:
+        if not _HAVE_FLA_GDN:
+>           raise ImportError("GatedDeltaNet adapters require flash-linear-attention (fla)")
+E           ImportError: GatedDeltaNet adapters require flash-linear-attention (fla)
+
+areno/models/_shared/dynamo_wrappers.py:31: ImportError
+_______________ test_native_delta_packed_gradients[dtype1-True] ________________
+
+kda = True, dtype = torch.bfloat16
+
+    @pytest.mark.parametrize("kda", [False, True])
+    @pytest.mark.parametrize("dtype", [torch.float32, torch.bfloat16])
+    def test_native_delta_packed_gradients(kda, dtype):
+        from areno.accel.native_delta import _differentiable_block, _TrainDelta
+    
+        torch.manual_seed(91)
+        n, h, d = 39, 4, 32
+    
+        def random(*shape):
+            return torch.randn(*shape, device="cuda", requires_grad=True)
+    
+        q, k, v, a, b, decay, bias = xs = [
+            random(*shape)
+            for shape in [
+                (1, n, 4 if kda else 2, d),
+                (1, n, 4 if kda else 2, d),
+                (1, n, h, d),
+                (1, n, h, d) if kda else (1, n, h),
+                (1, n, h),
+                (h,),
+                (h * d if kda else h,),
+            ]
+        ]
+        if dtype == torch.bfloat16:
+            q, k, v, a, b = [x.detach().to(dtype).requires_grad_() for x in xs[:5]]
+            xs = [q, k, v, a, b, decay, bias]
+        bound = -5 if kda else None
+        cu = torch.tensor([0, 4, n], device=q.device, dtype=torch.int32)
+        out = _TrainDelta.apply(*xs, cu, bound)
+        ref = []
+        for lo, hi in [(0, 4), (4, n)]:
+            y, _ = _differentiable_block(*(x[0, lo:hi] for x in xs[:5]), decay, bias, v.new_zeros(h, d, d), bound)
+            ref.append(y)
+        ref = torch.cat(ref)[None]
+        g = torch.randn_like(out)
+        torch.testing.assert_close(
+            out.float(),
+            ref.float(),
+            atol=0.008 if dtype == torch.bfloat16 else 1e-5,
+            rtol=0.008 if dtype == torch.bfloat16 else 1e-4,
+        )
+>       for got, want in zip(torch.autograd.grad(out, xs, g), torch.autograd.grad(ref, xs, g.float()), strict=True):
+
+tests/test_native_attention_gpu.py:592: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../venv-gpu/lib/python3.10/site-packages/torch/autograd/__init__.py:503: in grad
+    result = _engine_run_backward(
+../venv-gpu/lib/python3.10/site-packages/torch/autograd/graph.py:841: in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+../venv-gpu/lib/python3.10/site-packages/torch/autograd/function.py:315: in apply
+    return user_fn(self, *args)
+areno/accel/native_delta.py:77: in backward
+    out, _ = areno_kda_chunk(
+../venv-gpu/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py:1044: in _fn
+    return fn(*args, **kwargs)
+areno/accel/kda.py:35: in areno_kda_chunk
+    return chunk_kda(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+q = tensor([[[[ 0.8438, -0.1699, -0.8047,  ...,  0.6758,  1.4609,  0.3887],
+          [-1.2969, -0.9023, -0.6328,  ...,  1...2.1875, -2.2656,  ...,  0.4785,  1.7656,  0.3047]]]],
+       device='cuda:0', dtype=torch.bfloat16, requires_grad=True)
+k = tensor([[[[ 0.0330,  0.0110, -0.8320,  ..., -1.3750, -0.4668, -0.3359],
+          [-0.5195,  1.6953,  0.0405,  ..., -0...0.6289,  2.4531,  ...,  0.1943, -0.0469,  0.3789]]]],
+       device='cuda:0', dtype=torch.bfloat16, requires_grad=True)
+v = tensor([[[[ 0.2480,  0.3477, -0.0259,  ...,  1.3984, -0.4746,  1.2188],
+          [ 0.4375,  0.6289,  0.6836,  ..., -0...2.5625, -1.5234,  ...,  0.1787, -0.2793,  0.4258]]]],
+       device='cuda:0', dtype=torch.bfloat16, requires_grad=True)
+g = tensor([[[[ 0.5664,  0.5156, -1.0312,  ..., -0.2041,  0.3438,  0.9727],
+          [-0.2910,  0.5625,  0.2275,  ...,  0...0.1953,  0.9922,  ..., -1.0156, -0.4473, -1.7109]]]],
+       device='cuda:0', dtype=torch.bfloat16, requires_grad=True)
+beta = tensor([[[0.7520, 0.8007, 0.7732, 0.7621],
+         [0.3947, 0.8032, 0.5870, 0.8500],
+         [0.5003, 0.6637, 0.5151...2509, 0.3923, 0.9408],
+         [0.7417, 0.2806, 0.6072, 0.7786]]], device='cuda:0',
+       grad_fn=<SigmoidBackward0>)
+initial_state = None, initial_state_indices = None, output_final_state = False
+use_qk_l2norm_in_kernel = True, scale = 0.1767766952966369
+cu_seqlens = tensor([ 0,  4, 39], device='cuda:0')
+A_log = tensor([-0.9901, -1.7607, -0.1104, -1.2152], device='cuda:0',
+       requires_grad=True)
+dt_bias = tensor([-1.8184,  0.8876, -0.2724, -0.8978, -0.3598, -0.1317,  0.7486, -1.6531,
+         0.4232,  1.5746, -0.4885, -0....   -1.6800,  0.6193,  0.2806, -1.3729, -0.6222, -1.1801,  0.4865,  0.6929],
+       device='cuda:0', requires_grad=True)
+lower_bound = -5
+
+    def chunk_kda(
+        q: torch.Tensor,
+        k: torch.Tensor,
+        v: torch.Tensor,
+        g: torch.Tensor,
+        beta: torch.Tensor,
+        *,
+        initial_state: torch.Tensor | None = None,
+        initial_state_indices: torch.Tensor | None = None,
+        output_final_state: bool = False,
+        use_qk_l2norm_in_kernel: bool = True,
+        scale: float | None = None,
+        cu_seqlens: torch.Tensor | None = None,
+        A_log: torch.Tensor | None = None,
+        dt_bias: torch.Tensor | None = None,
+        lower_bound: float | None = None,
+    ) -> tuple[torch.Tensor, torch.Tensor | None]:
+>       from fla.ops.kda import chunk_kda as fla_chunk_kda
+E       ModuleNotFoundError: No module named 'fla'
+
+areno/accel/kernels/kda_fla/kda.py:51: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/test_native_attention_gpu.py::test_native_delta_packed_gradients[dtype1-False]
+FAILED tests/test_native_attention_gpu.py::test_native_delta_packed_gradients[dtype1-True]
+SKIPPED [2] tests/test_native_attention_gpu.py:21: could not import 'flash_attn': No module named 'flash_attn'
+SKIPPED [2] tests/test_native_attention_gpu.py:304: could not import 'flash_attn': No module named 'flash_attn'
+SKIPPED [1] tests/test_native_attention_gpu.py:331: could not import 'flash_attn': No module named 'flash_attn'
+2 failed, 59 passed, 5 skipped in 67.27s (0:01:07)

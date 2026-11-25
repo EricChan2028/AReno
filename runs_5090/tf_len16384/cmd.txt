@@ -1,0 +1,1 @@
+timeout 3600 python examples/kivi/teacher_forced_eval.py --model /root/kivi590/models/Qwen3-0.6B --text /root/kivi590/data/wikitext2_test.txt --length 16384 --rows 4 --prefill 256 --output /root/kivi590/runs_5090/tf_len16384/len16384_rows4.json 

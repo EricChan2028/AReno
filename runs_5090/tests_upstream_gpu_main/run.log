@@ -1,0 +1,6 @@
+.s.s........s.s.s.................................................       [100%]
+=========================== short test summary info ============================
+SKIPPED [2] tests/test_native_attention_gpu.py:21: could not import 'flash_attn': No module named 'flash_attn'
+SKIPPED [2] tests/test_native_attention_gpu.py:304: could not import 'flash_attn': No module named 'flash_attn'
+SKIPPED [1] tests/test_native_attention_gpu.py:331: could not import 'flash_attn': No module named 'flash_attn'
+61 passed, 5 skipped in 10.61s

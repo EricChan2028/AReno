@@ -1,0 +1,6 @@
+tests/test_agentic_codebreaker_example_cpu.py
+tests/test_agentic_cpu.py
+tests/test_agentic_shopping_example_cpu.py
+tests/test_agentic_terminal_hacking_example_cpu.py
+tests/test_agentic_tictactoe_example_cpu.py
+tests/test_agentic_trajectory_training_cpu.py

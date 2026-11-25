@@ -1,0 +1,6 @@
+tests/test_fused_experts_native.py
+tests/test_gemma4_lora_cpu.py
+tests/test_gemma4_lora_cuda.py
+tests/test_gemma4_multimodal_cpu.py
+tests/test_gpt_oss_cpu.py
+tests/test_gpt_oss_cuda.py

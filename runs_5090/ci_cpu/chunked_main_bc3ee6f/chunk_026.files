@@ -1,0 +1,6 @@
+tests/test_runtime_device_cpu.py
+tests/test_runtime_utils_cpu.py
+tests/test_sampling_cpu.py
+tests/test_serve_cli_cpu.py
+tests/test_setup_guardrails_cpu.py
+tests/test_sft_example_cpu.py

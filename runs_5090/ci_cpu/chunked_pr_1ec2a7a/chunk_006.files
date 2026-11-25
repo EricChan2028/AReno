@@ -1,0 +1,6 @@
+tests/test_bailing_v3_lora_cpu.py
+tests/test_bailing_v3_mtp_cpu.py
+tests/test_bi_attn_cpu.py
+tests/test_bi_attn_cuda.py
+tests/test_bi_attn_mlx.py
+tests/test_bi_attn_mlx_e2e.py

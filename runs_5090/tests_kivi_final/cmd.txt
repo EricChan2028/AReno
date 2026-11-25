@@ -1,0 +1,1 @@
+timeout 1200 python -m pytest -q -p no:cacheprovider -rfEs tests/test_kivi_kv_cache_cuda.py tests/test_kivi_kv_cache_cpu.py tests/test_logprobs_cuda.py 

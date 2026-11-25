@@ -1,0 +1,6 @@
+tests/test_parallel_linear_cpu.py
+tests/test_parallel_partition_cpu.py
+tests/test_peft_adapter_cpu.py
+tests/test_phi4mm_adapter_cpu.py
+tests/test_phi4mm_audio_cpu.py
+tests/test_phi4mm_checkpoint_cpu.py

@@ -1,0 +1,103 @@
+2026-11-25 10:26:07 extension: mode=reuse csrc=f7818d61ba1f4a271be0ed55166c4734123a975a setup.py=6b25073a2c82bdc8a949310ba8e51a9660fc30a5 torch=2.9.1+cu128 suffix=.cpython-310-x86_64-linux-gnu.so
+2026-11-25 10:26:15 EXTENSION_READY
+2026-11-25 12:46:16 AReno extension missing; run g0_extension.sh first
+2026-11-25 12:47:05 G1 start at ed72d98 test(kv): follow the native default in KIVI tests and harnesses (WIP)
+python 3.10.12 Linux-6.6.114.1-microsoft-standard-WSL2-x86_64-with-glibc2.35
+torch 2.9.1+cu128 cuda 12.8 triton 3.5.1 transformers 5.20.2
+gpu NVIDIA GeForce RTX 5090 Laptop GPU capability (12, 0) memory_gib 23.89
+flash_attn not installed (optional since the native default)
+2026-11-25 12:47:17 start tests_kivi
+2026-11-25 12:47:48 end tests_kivi exit=0 seconds=31 peak_vram=860MiB peak_job_rss=1568MiB peak_wsl_used=4775MiB
+2026-11-25 12:47:48 start tests_upstream_gpu
+2026-11-25 12:48:55 start bench_graph
+2026-11-25 12:49:07 start bench_graph_32k
+2026-11-25 12:49:13 end bench_graph_32k exit=0 seconds=6 peak_vram=1072MiB peak_job_rss=798MiB peak_wsl_used=7083MiB
+2026-11-25 12:49:13 start bench_eager
+2026-11-25 12:49:17 end bench_eager exit=0 seconds=4 peak_vram=4578MiB peak_job_rss=754MiB peak_wsl_used=8579MiB
+2026-11-25 12:49:18 start tf_len16384
+2026-11-25 13:24:47 end tf_len16384 exit=0 seconds=2129 peak_vram=14118MiB peak_job_rss=1423MiB peak_wsl_used=11037MiB
+2026-11-25 13:24:47 G1_DONE
+2026-11-25 13:25:04 G1b start at ed72d98 test(kv): follow the native default in KIVI tests and harnesses (WIP)
+2026-11-25 13:25:04 start tests_upstream_gpu_pr
+2026-11-25 13:28:10 end tests_upstream_gpu_pr exit=0 seconds=186 peak_vram=780MiB peak_job_rss=2653MiB peak_wsl_used=10350MiB
+2026-11-25 13:28:10 start tests_upstream_gpu_main
+2026-11-25 13:28:22 end tests_upstream_gpu_main exit=0 seconds=12 peak_vram=634MiB peak_job_rss=2192MiB peak_wsl_used=7246MiB
+2026-11-25 13:28:22 start bench_graph
+2026-11-25 13:28:29 end bench_graph exit=0 seconds=7 peak_vram=3442MiB peak_job_rss=757MiB peak_wsl_used=6300MiB
+2026-11-25 13:28:29 start bench_graph_16k
+2026-11-25 13:28:34 end bench_graph_16k exit=0 seconds=5 peak_vram=1024MiB peak_job_rss=753MiB peak_wsl_used=6636MiB
+2026-11-25 13:28:34 start bench_graph_128x16k_kivi
+2026-11-25 13:28:38 end bench_graph_128x16k_kivi exit=0 seconds=4 peak_vram=12372MiB peak_job_rss=750MiB peak_wsl_used=6710MiB
+2026-11-25 13:28:38 G1B_DONE
+2026-11-25 13:28:59 G2 start at ed72d98 test(kv): follow the native default in KIVI tests and harnesses (WIP), STEPS=8
+2026-11-25 13:28:59 start rl_s1_auto
+2026-11-25 13:38:52 end rl_s1_auto exit=0 seconds=593 peak_vram=16472MiB peak_job_rss=12441MiB peak_wsl_used=20906MiB
+2026-11-25 13:38:52 start rl_s1_kivi4
+2026-11-25 13:38:53 switch: stopping runner 860432 at the start of KIVI-4 to apply the per-arm caps
+2026-11-25 13:39:07 switch: continuing with g2b.sh (kivi4 kivi2 kivi2_r512 resume)
+2026-11-25 13:39:10 G2 start at ed72d98 test(kv): follow the native default in KIVI tests and harnesses (WIP), STEPS=8
+2026-11-25 13:39:10 start rl_s1_kivi4 (job RAM cap 16384 MiB)
+2026-11-25 13:49:10 end rl_s1_kivi4 exit=0 seconds=600 peak_vram=16574MiB peak_job_rss=12227MiB peak_wsl_used=13860MiB
+2026-11-25 13:49:10 start rl_s1_kivi2 (job RAM cap 14336 MiB)
+2026-11-25 13:59:49 guard bug: runner exited at the start of rl_s1_kivi2; unguarded job stopped, to be rerun
+2026-11-25 14:00:28 G2 start at ed72d98 test(kv): follow the native default in KIVI tests and harnesses (WIP), STEPS=8
+2026-11-25 14:00:28 start rl_s1_kivi2 (job RAM cap 14336 MiB)
+2026-11-25 14:10:25 end rl_s1_kivi2 exit=0 seconds=597 peak_vram=16536MiB peak_job_rss=12401MiB peak_wsl_used=13407MiB
+2026-11-25 14:10:25 start rl_s1_kivi2_r512 (job RAM cap 14336 MiB)
+2026-11-25 14:19:58 end rl_s1_kivi2_r512 exit=0 seconds=573 peak_vram=16566MiB peak_job_rss=12481MiB peak_wsl_used=20585MiB
+2026-11-25 14:19:58 start rl_s1_kivi4_resume4 (job RAM cap 16384 MiB)
+2026-11-25 14:25:02 end rl_s1_kivi4_resume4 exit=0 seconds=304 peak_vram=16562MiB peak_job_rss=12003MiB peak_wsl_used=19010MiB
+auto: final-window reward 0.7695 [baseline]; logp_abs_diff_mean 0.0000
+kivi4: final-window reward 0.7344 delta vs baseline -0.0352; logp_abs_diff_mean 0.0319
+kivi2: final-window reward 0.7539 delta vs baseline -0.0156; logp_abs_diff_mean 0.1927
+kivi2_r512: final-window reward 0.7656 delta vs baseline -0.0039; logp_abs_diff_mean 0.1154
+2026-11-25 14:25:03 G2_RL_DONE
+2026-11-25 14:25:23 G2 start at ed72d98 test(kv): follow the native default in KIVI tests and harnesses (WIP), STEPS=8
+2026-11-25 14:25:30 start lc64_auto_mrp8 (job RAM cap 14336 MiB)
+2026-11-25 14:28:59 end lc64_auto_mrp8 exit=0 seconds=209 peak_vram=16126MiB peak_job_rss=3915MiB peak_wsl_used=6158MiB
+2026-11-25 14:28:59 start lc64_kivi4_mrp8 (job RAM cap 14336 MiB)
+2026-11-25 14:45:58 end lc64_kivi4_mrp8 exit=0 seconds=1019 peak_vram=9540MiB peak_job_rss=3989MiB peak_wsl_used=8114MiB
+2026-11-25 14:45:58 start lc64_kivi2_mrp8 (job RAM cap 14336 MiB)
+2026-11-25 15:02:53 end lc64_kivi2_mrp8 exit=0 seconds=1015 peak_vram=8308MiB peak_job_rss=3968MiB peak_wsl_used=8974MiB
+2026-11-25 15:02:53 start lc64_kivi4_mrp24 (job RAM cap 14336 MiB)
+2026-11-25 15:41:32 end lc64_kivi4_mrp24 exit=124 seconds=2319 peak_vram=16312MiB peak_job_rss=2960MiB peak_wsl_used=12736MiB
+2026-11-25 15:41:32 start lc64_kivi2_mrp40 (job RAM cap 14336 MiB)
+2026-11-25 16:20:23 end lc64_kivi2_mrp40 exit=124 seconds=2331 peak_vram=16470MiB peak_job_rss=2958MiB peak_wsl_used=21464MiB
+2026-11-25 16:20:23 G2_LC_DONE
+2026-11-25 16:22:44 start probe_prefix (job RAM cap 14336 MiB)
+2026-11-25 16:23:39 end probe_prefix exit=0 seconds=55 peak_vram=832MiB peak_job_rss=836MiB peak_wsl_used=1452MiB
+2026-11-25 16:27:08 G3 start at ccd0016 fix(kv): run KIVI cached-prefix chunks through the native tiled paged kernel (WIP)
+2026-11-25 16:27:10 start tests_kivi_fix (job RAM cap 14336 MiB)
+2026-11-25 16:27:22 end tests_kivi_fix exit=0 seconds=12 peak_vram=860MiB peak_job_rss=1407MiB peak_wsl_used=2002MiB
+59 passed, 2 skipped in 10.99s
+2026-11-25 16:27:25 G2 start at ccd0016 fix(kv): run KIVI cached-prefix chunks through the native tiled paged kernel (WIP), STEPS=8
+2026-11-25 16:27:25 start lc64_auto_mrp8 (job RAM cap 14336 MiB)
+2026-11-25 16:30:44 end lc64_auto_mrp8 exit=0 seconds=199 peak_vram=16126MiB peak_job_rss=3702MiB peak_wsl_used=3949MiB
+2026-11-25 16:30:44 start lc64_kivi4_mrp8 (job RAM cap 14336 MiB)
+2026-11-25 16:33:31 end lc64_kivi4_mrp8 exit=0 seconds=167 peak_vram=9538MiB peak_job_rss=3667MiB peak_wsl_used=3870MiB
+2026-11-25 16:33:31 start lc64_kivi2_mrp8 (job RAM cap 14336 MiB)
+2026-11-25 16:36:11 end lc64_kivi2_mrp8 exit=0 seconds=160 peak_vram=8306MiB peak_job_rss=3935MiB peak_wsl_used=4162MiB
+2026-11-25 16:36:11 start lc64_kivi4_mrp24 (job RAM cap 14336 MiB)
+2026-11-25 16:38:40 end lc64_kivi4_mrp24 exit=0 seconds=149 peak_vram=16310MiB peak_job_rss=3429MiB peak_wsl_used=3675MiB
+2026-11-25 16:38:40 start lc64_kivi2_mrp40 (job RAM cap 14336 MiB)
+2026-11-25 16:41:06 end lc64_kivi2_mrp40 exit=0 seconds=146 peak_vram=16468MiB peak_job_rss=3854MiB peak_wsl_used=4095MiB
+2026-11-25 16:41:06 G2_LC_DONE
+2026-11-25 16:41:09 G2 start at ccd0016 fix(kv): run KIVI cached-prefix chunks through the native tiled paged kernel (WIP), STEPS=8
+2026-11-25 16:41:09 start gsm8k512_auto (job RAM cap 14336 MiB)
+2026-11-25 16:46:17 end gsm8k512_auto exit=0 seconds=308 peak_vram=13686MiB peak_job_rss=4062MiB peak_wsl_used=4251MiB
+2026-11-25 16:46:17 start gsm8k512_kivi4 (job RAM cap 14336 MiB)
+2026-11-25 16:51:34 end gsm8k512_kivi4 exit=0 seconds=317 peak_vram=8404MiB peak_job_rss=4044MiB peak_wsl_used=4263MiB
+2026-11-25 16:51:34 start gsm8k512_kivi2 (job RAM cap 14336 MiB)
+2026-11-25 16:56:53 end gsm8k512_kivi2 exit=0 seconds=319 peak_vram=7284MiB peak_job_rss=3998MiB peak_wsl_used=4205MiB
+      1 KIVI KV cache: dtype=kivi2 group_size=32 residual_length=128 blocks=1761 slots=41 bytes=10446700544
+      9 KIVI KV cache: dtype=kivi2 group_size=32 residual_length=128 blocks=321 slots=33 bytes=2372665344
+      1 KIVI KV cache: dtype=kivi2 group_size=32 residual_length=128 blocks=353 slots=9 bytes=2108424192
+      8 KIVI KV cache: dtype=kivi2 group_size=32 residual_length=512 blocks=321 slots=33 bytes=3825991680
+      1 KIVI KV cache: dtype=kivi4 group_size=32 residual_length=128 blocks=1057 slots=25 bytes=10156769280
+     13 KIVI KV cache: dtype=kivi4 group_size=32 residual_length=128 blocks=321 slots=33 bytes=3550740480
+      1 KIVI KV cache: dtype=kivi4 group_size=32 residual_length=128 blocks=353 slots=9 bytes=3403939840
+2026-11-25 16:56:53 G2_GSM8K_DONE
+2026-11-25 16:56:53 G3_DONE
+2026-11-25 16:58:11 rl_s1_kivi2: files of the first attempt (pid 889952, 13:49-13:59, ran without the guard after the runner crash) moved to rl_s1_kivi2/unguarded_first_attempt; results use the guarded rerun only
+2026-11-25 17:02:31 start tests_kivi_final (job RAM cap 14336 MiB)
+2026-11-25 17:02:48 end tests_kivi_final exit=0 seconds=17 peak_vram=860MiB peak_job_rss=1677MiB peak_wsl_used=2230MiB

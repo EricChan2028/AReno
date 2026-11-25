@@ -1,0 +1,3 @@
+reused /root/actc591/AReno/areno/accel/_areno_accel.cpython-310-x86_64-linux-gnu.so sha256=daeeac8f36873f399aef7b614e943c4c9ba8dea0d3f9588f0a5cde3dd9a9117c (built on this machine for the AReno #591 work from the same areno/accel/csrc tree and setup.py)
+daeeac8f36873f399aef7b614e943c4c9ba8dea0d3f9588f0a5cde3dd9a9117c  /root/kivi590/AReno-pr/areno/accel/_areno_accel.cpython-310-x86_64-linux-gnu.so
+csrc_tree=f7818d61ba1f4a271be0ed55166c4734123a975a setup_py=6b25073a2c82bdc8a949310ba8e51a9660fc30a5 torch=2.9.1+cu128

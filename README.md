@@ -24,6 +24,7 @@ first launch at 7a71205 that was stopped and relaunched at 5706d51
 | `scripts/`, `scripts_serverC/` | all | the shell and Python drivers that launched every run on the two hosts |
 | `env/` | setup | `pip freeze`, `nvidia-smi`, `nvcc`, OS release, sha256 of data and model files |
 | `tables.md` | all | tables generated from these files by `scripts/make_report.py` |
+| `runs_5090/` | 9 | the re-run on the current `main` with the native backend on an RTX 5090 Laptop GPU; see `runs_5090/README.md` |
 
 `runs/rl_final/s*_bf16repeat` were launched as KIVI-2 runs through the first
 version of `train_seeded.py`, whose override never reached the GSPO trainer

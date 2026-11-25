@@ -1,0 +1,56 @@
+{
+  "device": "NVIDIA GeForce RTX 5090 Laptop GPU",
+  "torch": "2.9.1+cu128",
+  "args": {
+    "rows": [
+      128
+    ],
+    "context": [
+      16384
+    ],
+    "q_heads": 16,
+    "kv_heads": 8,
+    "head_dim": 128,
+    "dtypes": [
+      "kivi2",
+      "kivi4"
+    ],
+    "baseline": "native",
+    "group_size": 32,
+    "residual_length": 128,
+    "warmup": 2,
+    "iters": 20,
+    "cuda_graph": true,
+    "output": "/root/kivi590/runs_5090/bench_graph_128x16k_kivi/decode_graph_128x16k_kivi.json"
+  },
+  "results": [
+    {
+      "dtype": "kivi2",
+      "rows": 128,
+      "context": 16384,
+      "median_ms": 7.169919967651367,
+      "p10_ms": 6.015679836273193,
+      "p90_ms": 7.242688179016113,
+      "cache_bytes": 1719664640,
+      "step_workspace_bytes": 17564672,
+      "total_bytes": 1737229312,
+      "peak_allocated_bytes": 1738312704,
+      "peak_reserved_bytes": 1742733312,
+      "kv_tokens_per_ms": 292510.9358908229
+    },
+    {
+      "dtype": "kivi4",
+      "rows": 128,
+      "context": 16384,
+      "median_ms": 7.400511980056763,
+      "p10_ms": 6.484096050262451,
+      "p90_ms": 7.457312107086182,
+      "cache_bytes": 2810183680,
+      "step_workspace_bytes": 17564672,
+      "total_bytes": 2827748352,
+      "peak_allocated_bytes": 2828831744,
+      "peak_reserved_bytes": 2833252352,
+      "kv_tokens_per_ms": 283396.6089983836
+    }
+  ]
+}

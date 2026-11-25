@@ -1,0 +1,6 @@
+tests/test_mlx_qlora_cpu.py
+tests/test_mlx_qlora_e2e.py
+tests/test_mlx_quantization_dispatch_cpu.py
+tests/test_mlx_training_cpu.py
+tests/test_moe_autograd_cpu.py
+tests/test_moe_native.py

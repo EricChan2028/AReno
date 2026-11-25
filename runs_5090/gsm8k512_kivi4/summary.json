@@ -1,0 +1,21 @@
+{
+  "kv_cache_dtype": "kivi4",
+  "runtime": {
+    "attn_backend": "native",
+    "kv_cache_dtype": "kivi4",
+    "kivi_group_size": 32,
+    "kivi_residual_length": 128
+  },
+  "prompts": 512,
+  "samples_per_prompt": 1,
+  "temperature": 1.0,
+  "seed": 1234,
+  "accuracy": 0.734375,
+  "accuracy_stderr": 0.019519039151666685,
+  "generated_tokens": 718977,
+  "mean_response_tokens": 1404.251953125,
+  "rollout_seconds": 313.10210304099746,
+  "generated_tokens_per_s": 2296.302046575067,
+  "max_new_tokens": 2048,
+  "max_running_prompts": 32
+}

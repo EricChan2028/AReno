@@ -1,0 +1,25 @@
+loading checkpoint:   0%|          | 0/29 [00:00<?, ?stage/s]loading checkpoint:  28%|██▊       | 8/29 [00:00<00:00, 73.36stage/s]loading checkpoint:  55%|█████▌    | 16/29 [00:00<00:00, 66.84stage/s]loading checkpoint:  79%|███████▉  | 23/29 [00:00<00:00, 66.29stage/s]loading checkpoint: 100%|██████████| 29/29 [00:00<00:00, 66.67stage/s]
+2026-11-25 15:03:03 INFO areno.engine.inference inference.py:293 - KIVI KV cache: dtype=kivi4 group_size=32 residual_length=128 blocks=1057 slots=25 bytes=10156769280
+2026-11-25 15:03:06 INFO areno.engine.inference inference.py:1755 - decode CUDA graphs ready: decode=7 verify=0 draft=0 skipped_buckets=0 free_gib=9.58
+2026-11-25 15:05:08 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=2 cuda_graph=True tokens_per_second=0.0
+2026-11-25 15:07:09 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=3 cuda_graph=True tokens_per_second=0.0
+2026-11-25 15:09:09 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=4 cuda_graph=True tokens_per_second=0.0
+2026-11-25 15:11:08 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=5 cuda_graph=True tokens_per_second=0.0
+2026-11-25 15:13:08 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=6 cuda_graph=True tokens_per_second=0.0
+2026-11-25 15:15:08 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=7 cuda_graph=True tokens_per_second=0.1
+2026-11-25 15:17:06 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=8 cuda_graph=True tokens_per_second=0.1
+2026-11-25 15:19:04 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=9 cuda_graph=True tokens_per_second=0.1
+2026-11-25 15:21:00 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=10 cuda_graph=True tokens_per_second=0.1
+2026-11-25 15:22:54 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=11 cuda_graph=True tokens_per_second=0.1
+2026-11-25 15:24:47 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=12 cuda_graph=True tokens_per_second=0.1
+2026-11-25 15:26:39 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=13 cuda_graph=True tokens_per_second=0.1
+2026-11-25 15:28:29 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=14 cuda_graph=True tokens_per_second=0.1
+2026-11-25 15:30:21 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=15 cuda_graph=True tokens_per_second=0.1
+2026-11-25 15:32:13 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=16 cuda_graph=True tokens_per_second=0.1
+2026-11-25 15:34:03 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=17 cuda_graph=True tokens_per_second=0.2
+2026-11-25 15:35:53 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=18 cuda_graph=True tokens_per_second=0.2
+2026-11-25 15:37:42 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=19 cuda_graph=True tokens_per_second=0.2
+2026-11-25 15:39:28 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=20 cuda_graph=True tokens_per_second=0.2
+2026-11-25 15:41:13 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=21 cuda_graph=True tokens_per_second=0.2
+/usr/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 7 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '

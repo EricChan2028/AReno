@@ -1,0 +1,1 @@
+timeout 1200 python examples/kivi/bench_decode_attention.py --cuda-graph --warmup 2 --iters 20 --rows 1 8 32 --context 16384 --output /root/kivi590/runs_5090/bench_graph_16k/decode_graph_16k.json 

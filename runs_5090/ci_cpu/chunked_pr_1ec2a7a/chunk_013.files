@@ -1,0 +1,6 @@
+tests/test_kivi_kv_cache_cuda.py
+tests/test_label_jev_cpu.py
+tests/test_label_jev_mlx_cpu.py
+tests/test_label_jev_serve_cpu.py
+tests/test_logprobs_cpu.py
+tests/test_logprobs_cuda.py

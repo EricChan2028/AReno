@@ -1,0 +1,6 @@
+tests/test_moe_unpermute_cuda.py
+tests/test_more_losses_cpu.py
+tests/test_mst_cpu.py
+tests/test_mst_models.py
+tests/test_multimodal_optimizer_cpu.py
+tests/test_native_attention_gpu.py

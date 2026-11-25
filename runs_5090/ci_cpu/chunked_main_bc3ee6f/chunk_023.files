@@ -1,0 +1,6 @@
+tests/test_phi4mm_vision_cpu.py
+tests/test_pivot_sampling_cuda.py
+tests/test_policy_dashboard_samples_cpu.py
+tests/test_policy_tensor_sync_cpu.py
+tests/test_protocol_cpu.py
+tests/test_qlora.py

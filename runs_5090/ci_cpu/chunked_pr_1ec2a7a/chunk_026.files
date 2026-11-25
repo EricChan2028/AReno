@@ -1,0 +1,6 @@
+tests/test_routing_common_cpu.py
+tests/test_routing_replay_cpu.py
+tests/test_runtime_device_cpu.py
+tests/test_runtime_utils_cpu.py
+tests/test_sampling_cpu.py
+tests/test_serve_cli_cpu.py

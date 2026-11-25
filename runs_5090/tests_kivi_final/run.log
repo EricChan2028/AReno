@@ -1,0 +1,5 @@
+.................s.s.................................................... [ 90%]
+........                                                                 [100%]
+=========================== short test summary info ============================
+SKIPPED [2] tests/test_kivi_kv_cache_cuda.py:372: flash-attn not installed
+78 passed, 2 skipped in 17.18s

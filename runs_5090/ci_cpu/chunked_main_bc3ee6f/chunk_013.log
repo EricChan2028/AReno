@@ -1,0 +1,177 @@
+.......................F..........                                       [100%]
+=================================== FAILURES ===================================
+_______ test_row_parallel_grad_correction_reduces_sharded_gram_across_tp _______
+
+    def test_row_parallel_grad_correction_reduces_sharded_gram_across_tp() -> None:
+        reference = _row_parallel_correction(0, 1, None)
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        port = _free_port()
+        processes = [spawn.Process(target=_gloo_row_parallel_worker, args=(rank, port, output_queue)) for rank in range(2)]
+        for process in processes:
+            process.start()
+        try:
+>           results = dict(output_queue.get(timeout=60) for _ in processes)
+
+tests/test_lora_fa_cpu.py:236: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_lora_fa_cpu.py:236: in <genexpr>
+    results = dict(output_queue.get(timeout=60) for _ in processes)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <multiprocessing.queues.Queue object at 0x772efd24ca90>, block = True
+timeout = 59.999993831999745
+
+    def get(self, block=True, timeout=None):
+        if self._closed:
+            raise ValueError(f"Queue {self!r} is closed")
+        if block and timeout is None:
+            with self._rlock:
+                res = self._recv_bytes()
+            self._sem.release()
+        else:
+            if block:
+                deadline = time.monotonic() + timeout
+            if not self._rlock.acquire(block, timeout):
+                raise Empty
+            try:
+                if block:
+                    timeout = deadline - time.monotonic()
+                    if not self._poll(timeout):
+>                       raise Empty
+E                       _queue.Empty
+
+/usr/lib/python3.10/multiprocessing/queues.py:114: Empty
+----------------------------- Captured stdout call -----------------------------
+..............................................F..........                                       [100%]F..........                                       [100%]
+=================================== FAILURES ===================================
+_______ test_row_parallel_grad_correction_reduces_sharded_gram_across_tp _______
+
+    def test_row_parallel_grad_correction_reduces_sharded_gram_across_tp() -> None:
+        reference = _row_parallel_correction(0, 1, None)
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        port = _free_port()
+        processes = [spawn.Process(target=_gloo_row_parallel_worker, args=(rank, port, output_queue)) for rank in range(2)]
+        for process in processes:
+>           process.start()
+
+tests/test_lora_fa_cpu.py:234: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.10/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+/usr/lib/python3.10/multiprocessing/context.py:288: in _Popen
+    return Popen(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_fork.py:19: in __init__
+    self._launch(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:42: in _launch
+    prep_data = spawn.get_preparation_data(process_obj._name)
+/usr/lib/python3.10/multiprocessing/spawn.py:154: in get_preparation_data
+    _check_not_importing_main()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _check_not_importing_main():
+        if getattr(process.current_process(), '_inheriting', False):
+>           raise RuntimeError('''
+            An attempt has been made to start a new process before the
+            current process has finished its bootstrapping phase.
+    
+            This probably means that you are not using fork to start your
+            child processes and you have forgotten to use the proper idiom
+            in the main module:
+    
+                if __name__ == '__main__':
+                    freeze_support()
+                    ...
+    
+            The "freeze_support()" line can be omitted if the program
+            is not going to be frozen to produce an executable.''')
+E           RuntimeError: 
+E                   An attempt has been made to start a new process before the
+E                   current process has finished its bootstrapping phase.
+E           
+E                   This probably means that you are not using fork to start your
+E                   child processes and you have forgotten to use the proper idiom
+E                   in the main module:
+E           
+E                       if __name__ == '__main__':
+E                           freeze_support()
+E                           ...
+E           
+E                   The "freeze_support()" line can be omitted if the program
+E                   is not going to be frozen to produce an executable.
+
+/usr/lib/python3.10/multiprocessing/spawn.py:134: RuntimeError
+=========================== short test summary info ============================
+FAILED tests/test_lora_fa_cpu.py::test_row_parallel_grad_correction_reduces_sharded_gram_across_tp
+1 failed, 33 passed, 1 skipped, 16 deselected in 3.12s
+
+=================================== FAILURES ===================================
+_______ test_row_parallel_grad_correction_reduces_sharded_gram_across_tp _______
+
+    def test_row_parallel_grad_correction_reduces_sharded_gram_across_tp() -> None:
+        reference = _row_parallel_correction(0, 1, None)
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        port = _free_port()
+        processes = [spawn.Process(target=_gloo_row_parallel_worker, args=(rank, port, output_queue)) for rank in range(2)]
+        for process in processes:
+>           process.start()
+
+tests/test_lora_fa_cpu.py:234: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.10/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+/usr/lib/python3.10/multiprocessing/context.py:288: in _Popen
+    return Popen(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_fork.py:19: in __init__
+    self._launch(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:42: in _launch
+    prep_data = spawn.get_preparation_data(process_obj._name)
+/usr/lib/python3.10/multiprocessing/spawn.py:154: in get_preparation_data
+    _check_not_importing_main()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _check_not_importing_main():
+        if getattr(process.current_process(), '_inheriting', False):
+>           raise RuntimeError('''
+            An attempt has been made to start a new process before the
+            current process has finished its bootstrapping phase.
+    
+            This probably means that you are not using fork to start your
+            child processes and you have forgotten to use the proper idiom
+            in the main module:
+    
+                if __name__ == '__main__':
+                    freeze_support()
+                    ...
+    
+            The "freeze_support()" line can be omitted if the program
+            is not going to be frozen to produce an executable.''')
+E           RuntimeError: 
+E                   An attempt has been made to start a new process before the
+E                   current process has finished its bootstrapping phase.
+E           
+E                   This probably means that you are not using fork to start your
+E                   child processes and you have forgotten to use the proper idiom
+E                   in the main module:
+E           
+E                       if __name__ == '__main__':
+E                           freeze_support()
+E                           ...
+E           
+E                   The "freeze_support()" line can be omitted if the program
+E                   is not going to be frozen to produce an executable.
+
+/usr/lib/python3.10/multiprocessing/spawn.py:134: RuntimeError
+=========================== short test summary info ============================
+FAILED tests/test_lora_fa_cpu.py::test_row_parallel_grad_correction_reduces_sharded_gram_across_tp
+1 failed, 33 passed, 1 skipped, 16 deselected in 3.13s
+=========================== short test summary info ============================
+FAILED tests/test_lora_fa_cpu.py::test_row_parallel_grad_correction_reduces_sharded_gram_across_tp
+1 failed, 33 passed, 1 skipped, 16 deselected in 63.24s (0:01:03)
+PEAK_RSS_MIB 1018

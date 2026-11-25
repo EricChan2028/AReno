@@ -1,0 +1,6 @@
+tests/test_olmo2_adapter_cpu.py
+tests/test_opd_config_cpu.py
+tests/test_opd_loss_cpu.py
+tests/test_opd_mlx_backend_cpu.py
+tests/test_opd_mlx_numerics_cpu.py
+tests/test_opd_trainer_cpu.py

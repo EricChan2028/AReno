@@ -1,0 +1,6 @@
+tests/test_npu_embedding.py
+tests/test_npu_end_to_end.py
+tests/test_npu_kernel_interface_cpu.py
+tests/test_npu_library_adapters_cpu.py
+tests/test_npu_library_attention.py
+tests/test_npu_linear.py

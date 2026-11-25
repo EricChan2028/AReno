@@ -1,0 +1,1 @@
+timeout 2400 python examples/kivi/rollout_eval.py --model /root/kivi590/models/Qwen3-0.6B --dataset /root/kivi590/data/gsm8k_test64_ctx8k --kv-cache-dtype auto --max-prompt-tokens 9216 --max-running-prompts 8 --output /root/kivi590/runs_5090/lc64_auto_mrp8 

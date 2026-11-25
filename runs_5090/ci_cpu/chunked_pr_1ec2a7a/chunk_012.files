@@ -1,0 +1,6 @@
+tests/test_jev_cuda_cpu.py
+tests/test_jev_iterator_cpu.py
+tests/test_jev_mlx_full_e2e.py
+tests/test_jev_quantization_cpu.py
+tests/test_jev_serve_cpu.py
+tests/test_kivi_kv_cache_cpu.py

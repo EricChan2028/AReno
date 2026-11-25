@@ -1,0 +1,6 @@
+tests/test_multimodal_optimizer_cpu.py
+tests/test_native_attention_gpu.py
+tests/test_native_lora_e2e.py
+tests/test_native_policy_logprobs_e2e.py
+tests/test_npu_activation.py
+tests/test_npu_backend_cpu.py

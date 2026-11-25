@@ -1,0 +1,6 @@
+tests/test_algorithms_cpu.py
+tests/test_attention_native.py
+tests/test_auto_tune_cpu.py
+tests/test_ave_event_recognition_cpu.py
+tests/test_backend_selection_cpu.py
+tests/test_bailing_kv_cache_cpu.py

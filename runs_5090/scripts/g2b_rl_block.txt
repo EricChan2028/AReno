@@ -1,0 +1,23 @@
+ARMS=${ARMS:-"auto kivi4 kivi2 kivi2_r512 resume"}
+want() { case " $ARMS " in *" $1 "*) return 0 ;; esac; return 1; }
+# KIVI-4 saves a checkpoint and is resumed: the machine's schedule allows a 16 GiB
+# host-RAM cap for those two runs, only when WSL as a whole is below 18 GB.
+KIVI4_CAP=$((16 * 1024 * 1024))
+if want auto; then rl rl_s1_auto --kv-cache-dtype auto -- --ckpt $M --max-steps $STEPS; fi
+if want kivi4; then
+  wait_wsl_below 18 60 || exit 6
+  JOB_RSS_LIMIT_OVERRIDE_KB=$KIVI4_CAP rl rl_s1_kivi4 --kv-cache-dtype kivi4 -- --ckpt $M --max-steps $STEPS \
+    --save-path $OUT/rl_s1_kivi4/ckpt --save-interval $HALF
+fi
+if want kivi2; then rl rl_s1_kivi2 --kv-cache-dtype kivi2 -- --ckpt $M --max-steps $STEPS; fi
+if want kivi2_r512; then
+  rl rl_s1_kivi2_r512 --kv-cache-dtype kivi2 --kivi-residual-length 512 -- --ckpt $M --max-steps $STEPS
+fi
+CKPT=$OUT/rl_s1_kivi4/ckpt/$(printf 'step_%06d' $HALF)
+if want resume && [ -d $CKPT ]; then
+  wait_wsl_below 18 60 || exit 6
+  JOB_RSS_LIMIT_OVERRIDE_KB=$KIVI4_CAP rl rl_s1_kivi4_resume$HALF --kv-cache-dtype kivi4 --resume-step $HALF \
+    --resume-prompts $((HALF * BATCH)) -- --ckpt $CKPT --max-steps $((STEPS - HALF))
+elif want resume; then
+  log "no checkpoint at $CKPT; resume skipped"
+fi

@@ -1,0 +1,6 @@
+tests/test_tokenizer_loading_cpu.py
+tests/test_train_cli_config_cpu.py
+tests/test_train_pack_equivalence_cpu.py
+tests/test_trainer_api_cpu.py
+tests/test_trainer_dataset_utils_cpu.py
+tests/test_unified_memory_budget_cpu.py

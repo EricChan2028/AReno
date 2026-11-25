@@ -1,0 +1,3 @@
+old=   92 new= 8008: areno_causal_attention  4681.07 ms | tiled paged  10.63 ms | max |diff| 3.91e-03
+old= 4096 new= 4096: areno_causal_attention  2432.43 ms | tiled paged   4.84 ms | max |diff| 4.88e-04
+old= 6000 new= 2100: areno_causal_attention  1245.95 ms | tiled paged   3.29 ms | max |diff| 4.88e-04

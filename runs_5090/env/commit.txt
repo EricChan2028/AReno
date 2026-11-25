@@ -1,0 +1,3 @@
+ed72d98 test(kv): follow the native default in KIVI tests and harnesses (WIP)
+94e6e58 feat(engine): add opt-in KIVI 2/4-bit KV cache for CUDA rollout
+d9667ad perf(qlora): batch routed expert gradients and keep NF4 weights packed (#697)

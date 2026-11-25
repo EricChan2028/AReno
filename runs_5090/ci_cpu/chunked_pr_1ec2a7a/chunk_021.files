@@ -1,0 +1,6 @@
+tests/test_npu_optimizer_factored.py
+tests/test_npu_runtime.py
+tests/test_olmo2_adapter_cpu.py
+tests/test_opd_config_cpu.py
+tests/test_opd_loss_cpu.py
+tests/test_opd_mlx_backend_cpu.py

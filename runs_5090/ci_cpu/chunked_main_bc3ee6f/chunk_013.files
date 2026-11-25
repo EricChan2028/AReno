@@ -1,0 +1,6 @@
+tests/test_label_jev_mlx_cpu.py
+tests/test_label_jev_serve_cpu.py
+tests/test_logprobs_cpu.py
+tests/test_logprobs_cuda.py
+tests/test_lora_fa_cpu.py
+tests/test_losses_rewards_cpu.py

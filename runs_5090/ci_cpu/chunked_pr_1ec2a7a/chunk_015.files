@@ -1,0 +1,6 @@
+tests/test_mlx_bailing_v3_lora_e2e.py
+tests/test_mlx_gated_delta_cpu.py
+tests/test_mlx_generation_compat_cpu.py
+tests/test_mlx_lora_cpu.py
+tests/test_mlx_lora_e2e.py
+tests/test_mlx_online_quantization_cpu.py

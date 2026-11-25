@@ -1,0 +1,3 @@
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (298938 > 131072). Running this sequence through the model will result in indexing errors
+Saving the dataset (0/1 shards):   0%|          | 0/64 [00:00<?, ? examples/s]Saving the dataset (1/1 shards): 100%|██████████| 64/64 [00:00<00:00, 15737.55 examples/s]Saving the dataset (1/1 shards): 100%|██████████| 64/64 [00:00<00:00, 15052.74 examples/s]
+64 rows; prompt tokens min 8053 max 8155

@@ -1,0 +1,1 @@
+timeout 1200 python examples/kivi/bench_decode_attention.py --warmup 2 --iters 20 --rows 1 32 128 --context 1024 8192 --output /root/kivi590/runs_5090/bench_eager/decode_eager.json 

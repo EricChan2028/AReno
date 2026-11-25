@@ -1,0 +1,4 @@
+python 3.10.12 Linux-6.6.114.1-microsoft-standard-WSL2-x86_64-with-glibc2.35
+torch 2.9.1+cu128 cuda 12.8 triton 3.5.1 transformers 5.20.2
+gpu NVIDIA GeForce RTX 5090 Laptop GPU capability (12, 0) memory_gib 23.89
+flash_attn not installed (optional since the native default)

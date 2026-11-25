@@ -1,0 +1,6 @@
+tests/test_gpt_oss_tools_cpu.py
+tests/test_grouped_linear.py
+tests/test_harness_cpu.py
+tests/test_import_boundaries_cpu.py
+tests/test_inference_scheduler_cpu.py
+tests/test_jev_cpu.py

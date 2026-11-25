@@ -1,0 +1,19 @@
+{
+  "kv_cache_dtype": "auto",
+  "runtime": {
+    "attn_backend": "native",
+    "kv_cache_dtype": "auto"
+  },
+  "prompts": 64,
+  "samples_per_prompt": 1,
+  "temperature": 0.0,
+  "seed": null,
+  "accuracy": 0.71875,
+  "accuracy_stderr": 0.056201150663820934,
+  "generated_tokens": 59156,
+  "mean_response_tokens": 924.3125,
+  "rollout_seconds": 193.0512976509999,
+  "generated_tokens_per_s": 306.42632667998333,
+  "max_new_tokens": 2048,
+  "max_running_prompts": 8
+}

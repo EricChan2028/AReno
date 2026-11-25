@@ -1,0 +1,1365 @@
+.......................................FFFsss..                          [100%]
+=================================== FAILURES ===================================
+_________ test_real_gloo_dp_reduce_scatter_matches_averaged_reference __________
+
+    def test_real_gloo_dp_reduce_scatter_matches_averaged_reference() -> None:
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        port = _free_port()
+        processes = [
+            spawn.Process(target=_gloo_sharded_optimizer_worker, args=(rank, port, output_queue)) for rank in range(2)
+        ]
+        for process in processes:
+            process.start()
+>       results = dict((item[0], item[1:]) for item in (output_queue.get(timeout=30) for _ in processes))
+
+tests/test_fp32_master_optimizer_cpu.py:562: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_fp32_master_optimizer_cpu.py:562: in <genexpr>
+    results = dict((item[0], item[1:]) for item in (output_queue.get(timeout=30) for _ in processes))
+tests/test_fp32_master_optimizer_cpu.py:562: in <genexpr>
+    results = dict((item[0], item[1:]) for item in (output_queue.get(timeout=30) for _ in processes))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <multiprocessing.queues.Queue object at 0x7cfed2b3dcf0>, block = True
+timeout = 29.999991696000507
+
+    def get(self, block=True, timeout=None):
+        if self._closed:
+            raise ValueError(f"Queue {self!r} is closed")
+        if block and timeout is None:
+            with self._rlock:
+                res = self._recv_bytes()
+            self._sem.release()
+        else:
+            if block:
+                deadline = time.monotonic() + timeout
+            if not self._rlock.acquire(block, timeout):
+                raise Empty
+            try:
+                if block:
+                    timeout = deadline - time.monotonic()
+                    if not self._poll(timeout):
+>                       raise Empty
+E                       _queue.Empty
+
+/usr/lib/python3.10/multiprocessing/queues.py:114: Empty
+----------------------------- Captured stdout call -----------------------------
+........................................................................F..F....Fsss..                          [100%]
+=================================== FAILURES ===================================
+_________ test_real_gloo_dp_reduce_scatter_matches_averaged_reference __________
+
+    def test_real_gloo_dp_reduce_scatter_matches_averaged_reference() -> None:
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        port = _free_port()
+        processes = [
+            spawn.Process(target=_gloo_sharded_optimizer_worker, args=(rank, port, output_queue)) for rank in range(2)
+        ]
+        for process in processes:
+>           process.start()
+
+tests/test_fp32_master_optimizer_cpu.py:561: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.10/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+/usr/lib/python3.10/multiprocessing/context.py:288: in _Popen
+    return Popen(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_fork.py:19: in __init__
+    self._launch(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:42: in _launch
+    prep_data = spawn.get_preparation_data(process_obj._name)
+/usr/lib/python3.10/multiprocessing/spawn.py:154: in get_preparation_data
+    _check_not_importing_main()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _check_not_importing_main():
+        if getattr(process.current_process(), '_inheriting', False):
+>           raise RuntimeError('''
+            An attempt has been made to start a new process before the
+            current process has finished its bootstrapping phase.
+    
+            This probably means that you are not using fork to start your
+            child processes and you have forgotten to use the proper idiom
+            in the main module:
+    
+                if __name__ == '__main__':
+                    freeze_support()
+                    ...
+    
+            The "freeze_support()" line can be omitted if the program
+            is not going to be frozen to produce an executable.''')
+E           RuntimeError: 
+E                   An attempt has been made to start a new process before the
+E                   current process has finished its bootstrapping phase.
+E           
+E                   This probably means that you are not using fork to start your
+E                   child processes and you have forgotten to use the proper idiom
+E                   in the main module:
+E           
+E                       if __name__ == '__main__':
+E                           freeze_support()
+E                           ...
+E           
+E                   The "freeze_support()" line can be omitted if the program
+E                   is not going to be frozen to produce an executable.
+
+/usr/lib/python3.10/multiprocessing/spawn.py:134: RuntimeError
+_______ test_real_gloo_dp_zero_length_shard_joins_parameter_gather[fp32] _______
+
+optimizer_name = 'fp32'
+
+    @pytest.mark.parametrize("optimizer_name", ["fp32", "8bit"])
+    def test_real_gloo_dp_zero_length_shard_joins_parameter_gather(optimizer_name: str) -> None:
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        port = _free_port()
+        processes = [
+            spawn.Process(
+                target=_gloo_zero_length_optimizer_shard_worker,
+                args=(rank, port, optimizer_name, output_queue),
+            )
+            for rank in range(2)
+        ]
+        for process in processes:
+>           process.start()
+
+tests/test_fp32_master_optimizer_cpu.py:607: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.10/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+/usr/lib/python3.10/multiprocessing/context.py:288: in _Popen
+    return Popen(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_fork.py:19: in __init__
+    self._launch(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:42: in _launch
+    prep_data = spawn.get_preparation_data(process_obj._name)
+/usr/lib/python3.10/multiprocessing/spawn.py:154: in get_preparation_data
+    _check_not_importing_main()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _check_not_importing_main():
+        if getattr(process.current_process(), '_inheriting', False):
+>           raise RuntimeError('''
+            An attempt has been made to start a new process before the
+            current process has finished its bootstrapping phase.
+    
+            This probably means that you are not using fork to start your
+            child processes and you have forgotten to use the proper idiom
+            in the main module:
+    
+                if __name__ == '__main__':
+                    freeze_support()
+                    ...
+    
+            The "freeze_support()" line can be omitted if the program
+            is not going to be frozen to produce an executable.''')
+E           RuntimeError: 
+E                   An attempt has been made to start a new process before the
+E                   current process has finished its bootstrapping phase.
+E           
+E                   This probably means that you are not using fork to start your
+E                   child processes and you have forgotten to use the proper idiom
+E                   in the main module:
+E           
+E                       if __name__ == '__main__':
+E                           freeze_support()
+E                           ...
+E           
+E                   The "freeze_support()" line can be omitted if the program
+E                   is not going to be frozen to produce an executable.
+
+/usr/lib/python3.10/multiprocessing/spawn.py:134: RuntimeError
+_______ test_real_gloo_dp_zero_length_shard_joins_parameter_gather[8bit] _______
+
+optimizer_name = '8bit'
+
+    @pytest.mark.parametrize("optimizer_name", ["fp32", "8bit"])
+    def test_real_gloo_dp_zero_length_shard_joins_parameter_gather(optimizer_name: str) -> None:
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        port = _free_port()
+        processes = [
+            spawn.Process(
+                target=_gloo_zero_length_optimizer_shard_worker,
+                args=(rank, port, optimizer_name, output_queue),
+            )
+            for rank in range(2)
+        ]
+        for process in processes:
+>           process.start()
+
+tests/test_fp32_master_optimizer_cpu.py:607: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.10/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+/usr/lib/python3.10/multiprocessing/context.py:288: in _Popen
+    return Popen(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_fork.py:19: in __init__
+    self._launch(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:42: in _launch
+    prep_data = spawn.get_preparation_data(process_obj._name)
+/usr/lib/python3.10/multiprocessing/spawn.py:154: in get_preparation_data
+    _check_not_importing_main()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _check_not_importing_main():
+        if getattr(process.current_process(), '_inheriting', False):
+>           raise RuntimeError('''
+            An attempt has been made to start a new process before the
+            current process has finished its bootstrapping phase.
+    
+            This probably means that you are not using fork to start your
+            child processes and you have forgotten to use the proper idiom
+            in the main module:
+    
+                if __name__ == '__main__':
+                    freeze_support()
+                    ...
+    
+            The "freeze_support()" line can be omitted if the program
+            is not going to be frozen to produce an executable.''')
+E           RuntimeError: 
+FFFsss..                          [100%]
+=================================== FAILURES ===================================
+_________ test_real_gloo_dp_reduce_scatter_matches_averaged_reference __________
+
+    def test_real_gloo_dp_reduce_scatter_matches_averaged_reference() -> None:
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        port = _free_port()
+        processes = [
+            spawn.Process(target=_gloo_sharded_optimizer_worker, args=(rank, port, output_queue)) for rank in range(2)
+        ]
+        for process in processes:
+>           process.start()
+
+tests/test_fp32_master_optimizer_cpu.py:561: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.10/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+/usr/lib/python3.10/multiprocessing/context.py:288: in _Popen
+    return Popen(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_fork.py:19: in __init__
+    self._launch(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:42: in _launch
+    prep_data = spawn.get_preparation_data(process_obj._name)
+/usr/lib/python3.10/multiprocessing/spawn.py:154: in get_preparation_data
+    _check_not_importing_main()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _check_not_importing_main():
+        if getattr(process.current_process(), '_inheriting', False):
+>           raise RuntimeError('''
+            An attempt has been made to start a new process before the
+            current process has finished its bootstrapping phase.
+    
+            This probably means that you are not using fork to start your
+            child processes and you have forgotten to use the proper idiom
+            in the main module:
+    
+                if __name__ == '__main__':
+                    freeze_support()
+                    ...
+    
+            The "freeze_support()" line can be omitted if the program
+            is not going to be frozen to produce an executable.''')
+E           RuntimeError: 
+E                   An attempt has been made to start a new process before the
+E                   current process has finished its bootstrapping phase.
+E           
+E                   This probably means that you are not using fork to start your
+E                   child processes and you have forgotten to use the proper idiom
+E                   in the main module:
+E           
+E                       if __name__ == '__main__':
+E                           freeze_support()
+E                           ...
+E           
+E                   The "freeze_support()" line can be omitted if the program
+E                   is not going to be frozen to produce an executable.
+
+/usr/lib/python3.10/multiprocessing/spawn.py:134: RuntimeError
+_______ test_real_gloo_dp_zero_length_shard_joins_parameter_gather[fp32] _______
+
+optimizer_name = 'fp32'
+
+    @pytest.mark.parametrize("optimizer_name", ["fp32", "8bit"])
+    def test_real_gloo_dp_zero_length_shard_joins_parameter_gather(optimizer_name: str) -> None:
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        port = _free_port()
+        processes = [
+            spawn.Process(
+                target=_gloo_zero_length_optimizer_shard_worker,
+                args=(rank, port, optimizer_name, output_queue),
+            )
+            for rank in range(2)
+        ]
+        for process in processes:
+>           process.start()
+
+tests/test_fp32_master_optimizer_cpu.py:607: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.10/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+/usr/lib/python3.10/multiprocessing/context.py:288: in _Popen
+    return Popen(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_fork.py:19: in __init__
+    self._launch(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:42: in _launch
+    prep_data = spawn.get_preparation_data(process_obj._name)
+/usr/lib/python3.10/multiprocessing/spawn.py:154: in get_preparation_data
+    _check_not_importing_main()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _check_not_importing_main():
+        if getattr(process.current_process(), '_inheriting', False):
+>           raise RuntimeError('''
+            An attempt has been made to start a new process before the
+            current process has finished its bootstrapping phase.
+    
+            This probably means that you are not using fork to start your
+            child processes and you have forgotten to use the proper idiom
+            in the main module:
+    
+                if __name__ == '__main__':
+                    freeze_support()
+                    ...
+    
+            The "freeze_support()" line can be omitted if the program
+            is not going to be frozen to produce an executable.''')
+E           RuntimeError: 
+E                   An attempt has been made to start a new process before the
+E                   current process has finished its bootstrapping phase.
+E           
+E                   This probably means that you are not using fork to start your
+E                   child processes and you have forgotten to use the proper idiom
+E                   in the main module:
+E           
+E                       if __name__ == '__main__':
+E                           freeze_support()
+E                           ...
+E           
+E                   The "freeze_support()" line can be omitted if the program
+E                   is not going to be frozen to produce an executable.
+
+/usr/lib/python3.10/multiprocessing/spawn.py:134: RuntimeError
+_______ test_real_gloo_dp_zero_length_shard_joins_parameter_gather[8bit] _______
+
+optimizer_name = '8bit'
+
+    @pytest.mark.parametrize("optimizer_name", ["fp32", "8bit"])
+    def test_real_gloo_dp_zero_length_shard_joins_parameter_gather(optimizer_name: str) -> None:
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        port = _free_port()
+        processes = [
+            spawn.Process(
+                target=_gloo_zero_length_optimizer_shard_worker,
+                args=(rank, port, optimizer_name, output_queue),
+            )
+            for rank in range(2)
+        ]
+        for process in processes:
+>           process.start()
+
+tests/test_fp32_master_optimizer_cpu.py:607: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.10/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+/usr/lib/python3.10/multiprocessing/context.py:288: in _Popen
+    return Popen(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_fork.py:19: in __init__
+    self._launch(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:42: in _launch
+    prep_data = spawn.get_preparation_data(process_obj._name)
+/usr/lib/python3.10/multiprocessing/spawn.py:154: in get_preparation_data
+    _check_not_importing_main()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _check_not_importing_main():
+        if getattr(process.current_process(), '_inheriting', False):
+>           raise RuntimeError('''
+            An attempt has been made to start a new process before the
+            current process has finished its bootstrapping phase.
+    
+            This probably means that you are not using fork to start your
+            child processes and you have forgotten to use the proper idiom
+            in the main module:
+    
+                if __name__ == '__main__':
+                    freeze_support()
+                    ...
+    
+            The "freeze_support()" line can be omitted if the program
+            is not going to be frozen to produce an executable.''')
+E           RuntimeError: 
+E                   An attempt has been made to start a new process before the
+E                   current process has finished its bootstrapping phase.
+E           
+E                   This probably means that you are not using fork to start your
+E                   child processes and you have forgotten to use the proper idiom
+E                   in the main module:
+E           
+E                       if __name__ == '__main__':
+E                           freeze_support()
+E                           ...
+E           
+E                   The "freeze_support()" line can be omitted if the program
+E                   is not going to be frozen to produce an executable.
+
+/usr/lib/python3.10/multiprocessing/spawn.py:134: RuntimeError
+=========================== short test summary info ============================
+FAILED tests/test_fp32_master_optimizer_cpu.py::test_real_gloo_dp_reduce_scatter_matches_averaged_reference
+FAILED tests/test_fp32_master_optimizer_cpu.py::test_real_gloo_dp_zero_length_shard_joins_parameter_gather[fp32]
+FAILED tests/test_fp32_master_optimizer_cpu.py::test_real_gloo_dp_zero_length_shard_joins_parameter_gather[8bit]
+3 failed, 41 passed, 3 skipped, 4 deselected in 2.71s
+E                   An attempt has been made to start a new process before the
+E                   current process has finished its bootstrapping phase.
+E           
+E                   This probably means that you are not using fork to start your
+E                   child processes and you have forgotten to use the proper idiom
+E                   in the main module:
+E           
+E                       if __name__ == '__main__':
+E                           freeze_support()
+E                           ...
+E           
+E                   The "freeze_support()" line can be omitted if the program
+E                   is not going to be frozen to produce an executable.
+
+/usr/lib/python3.10/multiprocessing/spawn.py:134: RuntimeError
+=========================== short test summary info ============================
+FAILED tests/test_fp32_master_optimizer_cpu.py::test_real_gloo_dp_reduce_scatter_matches_averaged_reference
+FAILED tests/test_fp32_master_optimizer_cpu.py::test_real_gloo_dp_zero_length_shard_joins_parameter_gather[fp32]
+FAILED tests/test_fp32_master_optimizer_cpu.py::test_real_gloo_dp_zero_length_shard_joins_parameter_gather[8bit]
+3 failed, 41 passed, 3 skipped, 4 deselected in 2.80s
+_______ test_real_gloo_dp_zero_length_shard_joins_parameter_gather[fp32] _______
+
+optimizer_name = 'fp32'
+
+    @pytest.mark.parametrize("optimizer_name", ["fp32", "8bit"])
+    def test_real_gloo_dp_zero_length_shard_joins_parameter_gather(optimizer_name: str) -> None:
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        port = _free_port()
+        processes = [
+            spawn.Process(
+                target=_gloo_zero_length_optimizer_shard_worker,
+                args=(rank, port, optimizer_name, output_queue),
+            )
+            for rank in range(2)
+        ]
+        for process in processes:
+            process.start()
+        try:
+>           results = dict((item[0], item[1:]) for item in (output_queue.get(timeout=20) for _ in processes))
+
+tests/test_fp32_master_optimizer_cpu.py:609: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_fp32_master_optimizer_cpu.py:609: in <genexpr>
+    results = dict((item[0], item[1:]) for item in (output_queue.get(timeout=20) for _ in processes))
+tests/test_fp32_master_optimizer_cpu.py:609: in <genexpr>
+    results = dict((item[0], item[1:]) for item in (output_queue.get(timeout=20) for _ in processes))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <multiprocessing.queues.Queue object at 0x7cfed2c87d90>, block = True
+timeout = 19.99998386900006
+
+    def get(self, block=True, timeout=None):
+        if self._closed:
+            raise ValueError(f"Queue {self!r} is closed")
+        if block and timeout is None:
+            with self._rlock:
+                res = self._recv_bytes()
+            self._sem.release()
+        else:
+            if block:
+                deadline = time.monotonic() + timeout
+            if not self._rlock.acquire(block, timeout):
+                raise Empty
+            try:
+                if block:
+                    timeout = deadline - time.monotonic()
+                    if not self._poll(timeout):
+>                       raise Empty
+E                       _queue.Empty
+
+/usr/lib/python3.10/multiprocessing/queues.py:114: Empty
+----------------------------- Captured stdout call -----------------------------
+.........................................................................F.F...F.sss..                          [100%]
+=================================== FAILURES ===================================
+_________ test_real_gloo_dp_reduce_scatter_matches_averaged_reference __________
+
+    def test_real_gloo_dp_reduce_scatter_matches_averaged_reference() -> None:
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        port = _free_port()
+        processes = [
+            spawn.Process(target=_gloo_sharded_optimizer_worker, args=(rank, port, output_queue)) for rank in range(2)
+        ]
+        for process in processes:
+>           process.start()
+
+tests/test_fp32_master_optimizer_cpu.py:561: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.10/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+/usr/lib/python3.10/multiprocessing/context.py:288: in _Popen
+    return Popen(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_fork.py:19: in __init__
+    self._launch(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:42: in _launch
+    prep_data = spawn.get_preparation_data(process_obj._name)
+/usr/lib/python3.10/multiprocessing/spawn.py:154: in get_preparation_data
+    _check_not_importing_main()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _check_not_importing_main():
+        if getattr(process.current_process(), '_inheriting', False):
+>           raise RuntimeError('''
+            An attempt has been made to start a new process before the
+            current process has finished its bootstrapping phase.
+    
+            This probably means that you are not using fork to start your
+            child processes and you have forgotten to use the proper idiom
+            in the main module:
+    
+                if __name__ == '__main__':
+                    freeze_support()
+                    ...
+    
+            The "freeze_support()" line can be omitted if the program
+            is not going to be frozen to produce an executable.''')
+E           RuntimeError: 
+E                   An attempt has been made to start a new process before the
+E                   current process has finished its bootstrapping phase.
+E           
+E                   This probably means that you are not using fork to start your
+E                   child processes and you have forgotten to use the proper idiom
+E                   in the main module:
+E           
+E                       if __name__ == '__main__':
+E                           freeze_support()
+E                           ...
+E           
+E                   The "freeze_support()" line can be omitted if the program
+E                   is not going to be frozen to produce an executable.
+
+/usr/lib/python3.10/multiprocessing/spawn.py:134: RuntimeError
+_______ test_real_gloo_dp_zero_length_shard_joins_parameter_gather[fp32] _______
+
+optimizer_name = 'fp32'
+
+    @pytest.mark.parametrize("optimizer_name", ["fp32", "8bit"])
+    def test_real_gloo_dp_zero_length_shard_joins_parameter_gather(optimizer_name: str) -> None:
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        port = _free_port()
+        processes = [
+            spawn.Process(
+                target=_gloo_zero_length_optimizer_shard_worker,
+                args=(rank, port, optimizer_name, output_queue),
+            )
+            for rank in range(2)
+        ]
+        for process in processes:
+>           process.start()
+
+tests/test_fp32_master_optimizer_cpu.py:607: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.10/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+/usr/lib/python3.10/multiprocessing/context.py:288: in _Popen
+    return Popen(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_fork.py:19: in __init__
+    self._launch(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:42: in _launch
+    prep_data = spawn.get_preparation_data(process_obj._name)
+/usr/lib/python3.10/multiprocessing/spawn.py:154: in get_preparation_data
+    _check_not_importing_main()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _check_not_importing_main():
+        if getattr(process.current_process(), '_inheriting', False):
+>           raise RuntimeError('''
+            An attempt has been made to start a new process before the
+            current process has finished its bootstrapping phase.
+    
+            This probably means that you are not using fork to start your
+            child processes and you have forgotten to use the proper idiom
+            in the main module:
+    
+                if __name__ == '__main__':
+                    freeze_support()
+                    ...
+    
+            The "freeze_support()" line can be omitted if the program
+            is not going to be frozen to produce an executable.''')
+E           RuntimeError: 
+E                   An attempt has been made to start a new process before the
+E                   current process has finished its bootstrapping phase.
+E           
+E                   This probably means that you are not using fork to start your
+E                   child processes and you have forgotten to use the proper idiom
+E                   in the main module:
+E           
+E                       if __name__ == '__main__':
+E                           freeze_support()
+E                           ...
+E           
+E                   The "freeze_support()" line can be omitted if the program
+E                   is not going to be frozen to produce an executable.
+
+/usr/lib/python3.10/multiprocessing/spawn.py:134: RuntimeError
+_______ test_real_gloo_dp_zero_length_shard_joins_parameter_gather[8bit] _______
+
+optimizer_name = '8bit'
+
+    @pytest.mark.parametrize("optimizer_name", ["fp32", "8bit"])
+    def test_real_gloo_dp_zero_length_shard_joins_parameter_gather(optimizer_name: str) -> None:
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        port = _free_port()
+        processes = [
+            spawn.Process(
+                target=_gloo_zero_length_optimizer_shard_worker,
+                args=(rank, port, optimizer_name, output_queue),
+            )
+            for rank in range(2)
+        ]
+        for process in processes:
+>           process.start()
+
+tests/test_fp32_master_optimizer_cpu.py:607: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.10/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+/usr/lib/python3.10/multiprocessing/context.py:288: in _Popen
+    return Popen(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_fork.py:19: in __init__
+    self._launch(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:42: in _launch
+    prep_data = spawn.get_preparation_data(process_obj._name)
+/usr/lib/python3.10/multiprocessing/spawn.py:154: in get_preparation_data
+    _check_not_importing_main()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _check_not_importing_main():
+        if getattr(process.current_process(), '_inheriting', False):
+>           raise RuntimeError('''
+            An attempt has been made to start a new process before the
+            current process has finished its bootstrapping phase.
+    
+            This probably means that you are not using fork to start your
+            child processes and you have forgotten to use the proper idiom
+            in the main module:
+    
+                if __name__ == '__main__':
+                    freeze_support()
+                    ...
+    
+            The "freeze_support()" line can be omitted if the program
+            is not going to be frozen to produce an executable.''')
+E           RuntimeError: 
+FFFsss..                          [100%]
+=================================== FAILURES ===================================
+_________ test_real_gloo_dp_reduce_scatter_matches_averaged_reference __________
+
+    def test_real_gloo_dp_reduce_scatter_matches_averaged_reference() -> None:
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        port = _free_port()
+        processes = [
+            spawn.Process(target=_gloo_sharded_optimizer_worker, args=(rank, port, output_queue)) for rank in range(2)
+        ]
+        for process in processes:
+>           process.start()
+
+tests/test_fp32_master_optimizer_cpu.py:561: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.10/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+/usr/lib/python3.10/multiprocessing/context.py:288: in _Popen
+    return Popen(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_fork.py:19: in __init__
+    self._launch(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:42: in _launch
+    prep_data = spawn.get_preparation_data(process_obj._name)
+/usr/lib/python3.10/multiprocessing/spawn.py:154: in get_preparation_data
+    _check_not_importing_main()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _check_not_importing_main():
+        if getattr(process.current_process(), '_inheriting', False):
+>           raise RuntimeError('''
+            An attempt has been made to start a new process before the
+            current process has finished its bootstrapping phase.
+    
+            This probably means that you are not using fork to start your
+            child processes and you have forgotten to use the proper idiom
+            in the main module:
+    
+                if __name__ == '__main__':
+                    freeze_support()
+                    ...
+    
+            The "freeze_support()" line can be omitted if the program
+            is not going to be frozen to produce an executable.''')
+E           RuntimeError: 
+E                   An attempt has been made to start a new process before the
+E                   current process has finished its bootstrapping phase.
+E           
+E                   This probably means that you are not using fork to start your
+E                   child processes and you have forgotten to use the proper idiom
+E                   in the main module:
+E           
+E                       if __name__ == '__main__':
+E                           freeze_support()
+E                           ...
+E           
+E                   The "freeze_support()" line can be omitted if the program
+E                   is not going to be frozen to produce an executable.
+
+/usr/lib/python3.10/multiprocessing/spawn.py:134: RuntimeError
+_______ test_real_gloo_dp_zero_length_shard_joins_parameter_gather[fp32] _______
+
+optimizer_name = 'fp32'
+
+    @pytest.mark.parametrize("optimizer_name", ["fp32", "8bit"])
+    def test_real_gloo_dp_zero_length_shard_joins_parameter_gather(optimizer_name: str) -> None:
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        port = _free_port()
+        processes = [
+            spawn.Process(
+                target=_gloo_zero_length_optimizer_shard_worker,
+                args=(rank, port, optimizer_name, output_queue),
+            )
+            for rank in range(2)
+        ]
+        for process in processes:
+>           process.start()
+
+tests/test_fp32_master_optimizer_cpu.py:607: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.10/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+/usr/lib/python3.10/multiprocessing/context.py:288: in _Popen
+    return Popen(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_fork.py:19: in __init__
+    self._launch(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:42: in _launch
+    prep_data = spawn.get_preparation_data(process_obj._name)
+/usr/lib/python3.10/multiprocessing/spawn.py:154: in get_preparation_data
+    _check_not_importing_main()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _check_not_importing_main():
+        if getattr(process.current_process(), '_inheriting', False):
+>           raise RuntimeError('''
+            An attempt has been made to start a new process before the
+            current process has finished its bootstrapping phase.
+    
+            This probably means that you are not using fork to start your
+            child processes and you have forgotten to use the proper idiom
+            in the main module:
+    
+                if __name__ == '__main__':
+                    freeze_support()
+                    ...
+    
+            The "freeze_support()" line can be omitted if the program
+            is not going to be frozen to produce an executable.''')
+E           RuntimeError: 
+E                   An attempt has been made to start a new process before the
+E                   current process has finished its bootstrapping phase.
+E           
+E                   This probably means that you are not using fork to start your
+E                   child processes and you have forgotten to use the proper idiom
+E                   in the main module:
+E           
+E                       if __name__ == '__main__':
+E                           freeze_support()
+E                           ...
+E           
+E                   The "freeze_support()" line can be omitted if the program
+E                   is not going to be frozen to produce an executable.
+
+/usr/lib/python3.10/multiprocessing/spawn.py:134: RuntimeError
+_______ test_real_gloo_dp_zero_length_shard_joins_parameter_gather[8bit] _______
+
+optimizer_name = '8bit'
+
+    @pytest.mark.parametrize("optimizer_name", ["fp32", "8bit"])
+    def test_real_gloo_dp_zero_length_shard_joins_parameter_gather(optimizer_name: str) -> None:
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        port = _free_port()
+        processes = [
+            spawn.Process(
+                target=_gloo_zero_length_optimizer_shard_worker,
+                args=(rank, port, optimizer_name, output_queue),
+            )
+            for rank in range(2)
+        ]
+        for process in processes:
+>           process.start()
+
+tests/test_fp32_master_optimizer_cpu.py:607: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.10/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+/usr/lib/python3.10/multiprocessing/context.py:288: in _Popen
+    return Popen(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_fork.py:19: in __init__
+    self._launch(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:42: in _launch
+    prep_data = spawn.get_preparation_data(process_obj._name)
+/usr/lib/python3.10/multiprocessing/spawn.py:154: in get_preparation_data
+    _check_not_importing_main()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _check_not_importing_main():
+        if getattr(process.current_process(), '_inheriting', False):
+>           raise RuntimeError('''
+            An attempt has been made to start a new process before the
+            current process has finished its bootstrapping phase.
+    
+            This probably means that you are not using fork to start your
+            child processes and you have forgotten to use the proper idiom
+            in the main module:
+    
+                if __name__ == '__main__':
+                    freeze_support()
+                    ...
+    
+            The "freeze_support()" line can be omitted if the program
+            is not going to be frozen to produce an executable.''')
+E           RuntimeError: 
+E                   An attempt has been made to start a new process before the
+E                   current process has finished its bootstrapping phase.
+E           
+E                   This probably means that you are not using fork to start your
+E                   child processes and you have forgotten to use the proper idiom
+E                   in the main module:
+E           
+E                       if __name__ == '__main__':
+E                           freeze_support()
+E                           ...
+E           
+E                   The "freeze_support()" line can be omitted if the program
+E                   is not going to be frozen to produce an executable.
+
+/usr/lib/python3.10/multiprocessing/spawn.py:134: RuntimeError
+=========================== short test summary info ============================
+FAILED tests/test_fp32_master_optimizer_cpu.py::test_real_gloo_dp_reduce_scatter_matches_averaged_reference
+FAILED tests/test_fp32_master_optimizer_cpu.py::test_real_gloo_dp_zero_length_shard_joins_parameter_gather[fp32]
+FAILED tests/test_fp32_master_optimizer_cpu.py::test_real_gloo_dp_zero_length_shard_joins_parameter_gather[8bit]
+3 failed, 41 passed, 3 skipped, 4 deselected in 2.94s
+E                   An attempt has been made to start a new process before the
+E                   current process has finished its bootstrapping phase.
+E           
+E                   This probably means that you are not using fork to start your
+E                   child processes and you have forgotten to use the proper idiom
+E                   in the main module:
+E           
+E                       if __name__ == '__main__':
+E                           freeze_support()
+E                           ...
+E           
+E                   The "freeze_support()" line can be omitted if the program
+E                   is not going to be frozen to produce an executable.
+
+/usr/lib/python3.10/multiprocessing/spawn.py:134: RuntimeError
+=========================== short test summary info ============================
+FAILED tests/test_fp32_master_optimizer_cpu.py::test_real_gloo_dp_reduce_scatter_matches_averaged_reference
+FAILED tests/test_fp32_master_optimizer_cpu.py::test_real_gloo_dp_zero_length_shard_joins_parameter_gather[fp32]
+FAILED tests/test_fp32_master_optimizer_cpu.py::test_real_gloo_dp_zero_length_shard_joins_parameter_gather[8bit]
+3 failed, 41 passed, 3 skipped, 4 deselected in 3.02s
+_______ test_real_gloo_dp_zero_length_shard_joins_parameter_gather[8bit] _______
+
+optimizer_name = '8bit'
+
+    @pytest.mark.parametrize("optimizer_name", ["fp32", "8bit"])
+    def test_real_gloo_dp_zero_length_shard_joins_parameter_gather(optimizer_name: str) -> None:
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        port = _free_port()
+        processes = [
+            spawn.Process(
+                target=_gloo_zero_length_optimizer_shard_worker,
+                args=(rank, port, optimizer_name, output_queue),
+            )
+            for rank in range(2)
+        ]
+        for process in processes:
+            process.start()
+        try:
+>           results = dict((item[0], item[1:]) for item in (output_queue.get(timeout=20) for _ in processes))
+
+tests/test_fp32_master_optimizer_cpu.py:609: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_fp32_master_optimizer_cpu.py:609: in <genexpr>
+    results = dict((item[0], item[1:]) for item in (output_queue.get(timeout=20) for _ in processes))
+tests/test_fp32_master_optimizer_cpu.py:609: in <genexpr>
+    results = dict((item[0], item[1:]) for item in (output_queue.get(timeout=20) for _ in processes))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <multiprocessing.queues.Queue object at 0x7cfed2b82ce0>, block = True
+timeout = 19.99998418999894
+
+    def get(self, block=True, timeout=None):
+        if self._closed:
+            raise ValueError(f"Queue {self!r} is closed")
+        if block and timeout is None:
+            with self._rlock:
+                res = self._recv_bytes()
+            self._sem.release()
+        else:
+            if block:
+                deadline = time.monotonic() + timeout
+            if not self._rlock.acquire(block, timeout):
+                raise Empty
+            try:
+                if block:
+                    timeout = deadline - time.monotonic()
+                    if not self._poll(timeout):
+>                       raise Empty
+E                       _queue.Empty
+
+/usr/lib/python3.10/multiprocessing/queues.py:114: Empty
+----------------------------- Captured stdout call -----------------------------
+........................................................................F.F..Fsss..                          [100%]
+=================================== FAILURES ===================================
+_________ test_real_gloo_dp_reduce_scatter_matches_averaged_reference __________
+
+    def test_real_gloo_dp_reduce_scatter_matches_averaged_reference() -> None:
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        port = _free_port()
+        processes = [
+            spawn.Process(target=_gloo_sharded_optimizer_worker, args=(rank, port, output_queue)) for rank in range(2)
+        ]
+        for process in processes:
+>           process.start()
+
+tests/test_fp32_master_optimizer_cpu.py:561: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.10/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+/usr/lib/python3.10/multiprocessing/context.py:288: in _Popen
+    return Popen(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_fork.py:19: in __init__
+    self._launch(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:42: in _launch
+    prep_data = spawn.get_preparation_data(process_obj._name)
+/usr/lib/python3.10/multiprocessing/spawn.py:154: in get_preparation_data
+    _check_not_importing_main()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _check_not_importing_main():
+        if getattr(process.current_process(), '_inheriting', False):
+>           raise RuntimeError('''
+            An attempt has been made to start a new process before the
+            current process has finished its bootstrapping phase.
+    
+            This probably means that you are not using fork to start your
+            child processes and you have forgotten to use the proper idiom
+            in the main module:
+    
+                if __name__ == '__main__':
+                    freeze_support()
+                    ...
+    
+            The "freeze_support()" line can be omitted if the program
+            is not going to be frozen to produce an executable.''')
+E           RuntimeError: 
+E                   An attempt has been made to start a new process before the
+E                   current process has finished its bootstrapping phase.
+E           
+E                   This probably means that you are not using fork to start your
+E                   child processes and you have forgotten to use the proper idiom
+E                   in the main module:
+E           
+E                       if __name__ == '__main__':
+E                           freeze_support()
+E                           ...
+E           
+E                   The "freeze_support()" line can be omitted if the program
+E                   is not going to be frozen to produce an executable.
+
+/usr/lib/python3.10/multiprocessing/spawn.py:134: RuntimeError
+_______ test_real_gloo_dp_zero_length_shard_joins_parameter_gather[fp32] _______
+
+optimizer_name = 'fp32'
+
+    @pytest.mark.parametrize("optimizer_name", ["fp32", "8bit"])
+    def test_real_gloo_dp_zero_length_shard_joins_parameter_gather(optimizer_name: str) -> None:
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        port = _free_port()
+        processes = [
+            spawn.Process(
+                target=_gloo_zero_length_optimizer_shard_worker,
+                args=(rank, port, optimizer_name, output_queue),
+            )
+            for rank in range(2)
+        ]
+        for process in processes:
+>           process.start()
+
+tests/test_fp32_master_optimizer_cpu.py:607: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.10/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+/usr/lib/python3.10/multiprocessing/context.py:288: in _Popen
+    return Popen(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_fork.py:19: in __init__
+    self._launch(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:42: in _launch
+    prep_data = spawn.get_preparation_data(process_obj._name)
+/usr/lib/python3.10/multiprocessing/spawn.py:154: in get_preparation_data
+    _check_not_importing_main()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _check_not_importing_main():
+        if getattr(process.current_process(), '_inheriting', False):
+>           raise RuntimeError('''
+            An attempt has been made to start a new process before the
+            current process has finished its bootstrapping phase.
+    
+            This probably means that you are not using fork to start your
+            child processes and you have forgotten to use the proper idiom
+            in the main module:
+    
+                if __name__ == '__main__':
+                    freeze_support()
+                    ...
+    
+            The "freeze_support()" line can be omitted if the program
+            is not going to be frozen to produce an executable.''')
+E           RuntimeError: 
+E                   An attempt has been made to start a new process before the
+E                   current process has finished its bootstrapping phase.
+E           
+E                   This probably means that you are not using fork to start your
+E                   child processes and you have forgotten to use the proper idiom
+E                   in the main module:
+E           
+E                       if __name__ == '__main__':
+E                           freeze_support()
+E                           ...
+E           
+E                   The "freeze_support()" line can be omitted if the program
+E                   is not going to be frozen to produce an executable.
+
+/usr/lib/python3.10/multiprocessing/spawn.py:134: RuntimeError
+_______ test_real_gloo_dp_zero_length_shard_joins_parameter_gather[8bit] _______
+
+optimizer_name = '8bit'
+
+    @pytest.mark.parametrize("optimizer_name", ["fp32", "8bit"])
+    def test_real_gloo_dp_zero_length_shard_joins_parameter_gather(optimizer_name: str) -> None:
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        port = _free_port()
+        processes = [
+            spawn.Process(
+                target=_gloo_zero_length_optimizer_shard_worker,
+                args=(rank, port, optimizer_name, output_queue),
+            )
+            for rank in range(2)
+        ]
+        for process in processes:
+>           process.start()
+
+tests/test_fp32_master_optimizer_cpu.py:607: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.10/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+/usr/lib/python3.10/multiprocessing/context.py:288: in _Popen
+    return Popen(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_fork.py:19: in __init__
+    self._launch(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:42: in _launch
+    prep_data = spawn.get_preparation_data(process_obj._name)
+/usr/lib/python3.10/multiprocessing/spawn.py:154: in get_preparation_data
+    _check_not_importing_main()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _check_not_importing_main():
+        if getattr(process.current_process(), '_inheriting', False):
+>           raise RuntimeError('''
+            An attempt has been made to start a new process before the
+            current process has finished its bootstrapping phase.
+    
+            This probably means that you are not using fork to start your
+            child processes and you have forgotten to use the proper idiom
+            in the main module:
+    
+                if __name__ == '__main__':
+                    freeze_support()
+                    ...
+    
+            The "freeze_support()" line can be omitted if the program
+            is not going to be frozen to produce an executable.''')
+E           RuntimeError: 
+...FFFsss..                          [100%]
+=================================== FAILURES ===================================
+_________ test_real_gloo_dp_reduce_scatter_matches_averaged_reference __________
+
+    def test_real_gloo_dp_reduce_scatter_matches_averaged_reference() -> None:
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        port = _free_port()
+        processes = [
+            spawn.Process(target=_gloo_sharded_optimizer_worker, args=(rank, port, output_queue)) for rank in range(2)
+        ]
+        for process in processes:
+>           process.start()
+
+tests/test_fp32_master_optimizer_cpu.py:561: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.10/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+/usr/lib/python3.10/multiprocessing/context.py:288: in _Popen
+    return Popen(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_fork.py:19: in __init__
+    self._launch(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:42: in _launch
+    prep_data = spawn.get_preparation_data(process_obj._name)
+/usr/lib/python3.10/multiprocessing/spawn.py:154: in get_preparation_data
+    _check_not_importing_main()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _check_not_importing_main():
+        if getattr(process.current_process(), '_inheriting', False):
+>           raise RuntimeError('''
+            An attempt has been made to start a new process before the
+            current process has finished its bootstrapping phase.
+    
+            This probably means that you are not using fork to start your
+            child processes and you have forgotten to use the proper idiom
+            in the main module:
+    
+                if __name__ == '__main__':
+                    freeze_support()
+                    ...
+    
+            The "freeze_support()" line can be omitted if the program
+            is not going to be frozen to produce an executable.''')
+E           RuntimeError: 
+E                   An attempt has been made to start a new process before the
+E                   current process has finished its bootstrapping phase.
+E           
+E                   This probably means that you are not using fork to start your
+E                   child processes and you have forgotten to use the proper idiom
+E                   in the main module:
+E           
+E                       if __name__ == '__main__':
+E                           freeze_support()
+E                           ...
+E           
+E                   The "freeze_support()" line can be omitted if the program
+E                   is not going to be frozen to produce an executable.
+
+/usr/lib/python3.10/multiprocessing/spawn.py:134: RuntimeError
+_______ test_real_gloo_dp_zero_length_shard_joins_parameter_gather[fp32] _______
+
+optimizer_name = 'fp32'
+
+    @pytest.mark.parametrize("optimizer_name", ["fp32", "8bit"])
+    def test_real_gloo_dp_zero_length_shard_joins_parameter_gather(optimizer_name: str) -> None:
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        port = _free_port()
+        processes = [
+            spawn.Process(
+                target=_gloo_zero_length_optimizer_shard_worker,
+                args=(rank, port, optimizer_name, output_queue),
+            )
+            for rank in range(2)
+        ]
+        for process in processes:
+>           process.start()
+
+tests/test_fp32_master_optimizer_cpu.py:607: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.10/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+/usr/lib/python3.10/multiprocessing/context.py:288: in _Popen
+    return Popen(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_fork.py:19: in __init__
+    self._launch(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:42: in _launch
+    prep_data = spawn.get_preparation_data(process_obj._name)
+/usr/lib/python3.10/multiprocessing/spawn.py:154: in get_preparation_data
+    _check_not_importing_main()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _check_not_importing_main():
+        if getattr(process.current_process(), '_inheriting', False):
+>           raise RuntimeError('''
+            An attempt has been made to start a new process before the
+            current process has finished its bootstrapping phase.
+    
+            This probably means that you are not using fork to start your
+            child processes and you have forgotten to use the proper idiom
+            in the main module:
+    
+                if __name__ == '__main__':
+                    freeze_support()
+                    ...
+    
+            The "freeze_support()" line can be omitted if the program
+            is not going to be frozen to produce an executable.''')
+E           RuntimeError: 
+E                   An attempt has been made to start a new process before the
+E                   current process has finished its bootstrapping phase.
+E           
+E                   This probably means that you are not using fork to start your
+E                   child processes and you have forgotten to use the proper idiom
+E                   in the main module:
+E           
+E                       if __name__ == '__main__':
+E                           freeze_support()
+E                           ...
+E           
+E                   The "freeze_support()" line can be omitted if the program
+E                   is not going to be frozen to produce an executable.
+
+/usr/lib/python3.10/multiprocessing/spawn.py:134: RuntimeError
+_______ test_real_gloo_dp_zero_length_shard_joins_parameter_gather[8bit] _______
+
+optimizer_name = '8bit'
+
+    @pytest.mark.parametrize("optimizer_name", ["fp32", "8bit"])
+    def test_real_gloo_dp_zero_length_shard_joins_parameter_gather(optimizer_name: str) -> None:
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        port = _free_port()
+        processes = [
+            spawn.Process(
+                target=_gloo_zero_length_optimizer_shard_worker,
+                args=(rank, port, optimizer_name, output_queue),
+            )
+            for rank in range(2)
+        ]
+        for process in processes:
+>           process.start()
+
+tests/test_fp32_master_optimizer_cpu.py:607: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.10/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+/usr/lib/python3.10/multiprocessing/context.py:288: in _Popen
+    return Popen(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_fork.py:19: in __init__
+    self._launch(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:42: in _launch
+    prep_data = spawn.get_preparation_data(process_obj._name)
+/usr/lib/python3.10/multiprocessing/spawn.py:154: in get_preparation_data
+    _check_not_importing_main()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _check_not_importing_main():
+        if getattr(process.current_process(), '_inheriting', False):
+>           raise RuntimeError('''
+            An attempt has been made to start a new process before the
+            current process has finished its bootstrapping phase.
+    
+            This probably means that you are not using fork to start your
+            child processes and you have forgotten to use the proper idiom
+            in the main module:
+    
+                if __name__ == '__main__':
+                    freeze_support()
+                    ...
+    
+            The "freeze_support()" line can be omitted if the program
+            is not going to be frozen to produce an executable.''')
+E           RuntimeError: 
+E                   An attempt has been made to start a new process before the
+E                   current process has finished its bootstrapping phase.
+E           
+E                   This probably means that you are not using fork to start your
+E                   child processes and you have forgotten to use the proper idiom
+E                   in the main module:
+E           
+E                       if __name__ == '__main__':
+E                           freeze_support()
+E                           ...
+E           
+E                   The "freeze_support()" line can be omitted if the program
+E                   is not going to be frozen to produce an executable.
+
+/usr/lib/python3.10/multiprocessing/spawn.py:134: RuntimeError
+=========================== short test summary info ============================
+FAILED tests/test_fp32_master_optimizer_cpu.py::test_real_gloo_dp_reduce_scatter_matches_averaged_reference
+FAILED tests/test_fp32_master_optimizer_cpu.py::test_real_gloo_dp_zero_length_shard_joins_parameter_gather[fp32]
+FAILED tests/test_fp32_master_optimizer_cpu.py::test_real_gloo_dp_zero_length_shard_joins_parameter_gather[8bit]
+3 failed, 41 passed, 3 skipped, 4 deselected in 3.76s
+E                   An attempt has been made to start a new process before the
+E                   current process has finished its bootstrapping phase.
+E           
+E                   This probably means that you are not using fork to start your
+E                   child processes and you have forgotten to use the proper idiom
+E                   in the main module:
+E           
+E                       if __name__ == '__main__':
+E                           freeze_support()
+E                           ...
+E           
+E                   The "freeze_support()" line can be omitted if the program
+E                   is not going to be frozen to produce an executable.
+
+/usr/lib/python3.10/multiprocessing/spawn.py:134: RuntimeError
+=========================== short test summary info ============================
+FAILED tests/test_fp32_master_optimizer_cpu.py::test_real_gloo_dp_reduce_scatter_matches_averaged_reference
+FAILED tests/test_fp32_master_optimizer_cpu.py::test_real_gloo_dp_zero_length_shard_joins_parameter_gather[fp32]
+FAILED tests/test_fp32_master_optimizer_cpu.py::test_real_gloo_dp_zero_length_shard_joins_parameter_gather[8bit]
+3 failed, 41 passed, 3 skipped, 4 deselected in 3.85s
+=========================== short test summary info ============================
+FAILED tests/test_fp32_master_optimizer_cpu.py::test_real_gloo_dp_reduce_scatter_matches_averaged_reference
+FAILED tests/test_fp32_master_optimizer_cpu.py::test_real_gloo_dp_zero_length_shard_joins_parameter_gather[fp32]
+FAILED tests/test_fp32_master_optimizer_cpu.py::test_real_gloo_dp_zero_length_shard_joins_parameter_gather[8bit]
+3 failed, 41 passed, 3 skipped, 4 deselected in 73.27s (0:01:13)
+PEAK_RSS_MIB 971

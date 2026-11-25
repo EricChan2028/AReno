@@ -1,0 +1,1 @@
+timeout 2400 python examples/kivi/rollout_eval.py --model /root/kivi590/models/Qwen3-0.6B --dataset /root/kivi590/data/gsm8k_main_test --kv-cache-dtype auto --limit 512 --temperature 1.0 --seed 1234 --max-running-prompts 32 --output /root/kivi590/runs_5090/gsm8k512_auto 

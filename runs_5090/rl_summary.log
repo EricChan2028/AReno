@@ -1,0 +1,4 @@
+auto: final-window reward 0.7695 [baseline]; logp_abs_diff_mean 0.0000
+kivi4: final-window reward 0.7344 delta vs baseline -0.0352; logp_abs_diff_mean 0.0319
+kivi2: final-window reward 0.7539 delta vs baseline -0.0156; logp_abs_diff_mean 0.1927
+kivi2_r512: final-window reward 0.7656 delta vs baseline -0.0039; logp_abs_diff_mean 0.1154

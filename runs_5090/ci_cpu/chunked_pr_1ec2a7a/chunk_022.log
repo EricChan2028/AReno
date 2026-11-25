@@ -1,0 +1,192 @@
+...............F.....................................ss........          [100%]
+=================================== FAILURES ===================================
+____________ test_real_gloo_tp_broadcast_uses_partition_global_root ____________
+
+    def test_real_gloo_tp_broadcast_uses_partition_global_root() -> None:
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        # The coordinator holds the server store (port=0) so the resolved port is
+        # genuinely reserved before the workers join as client stores.
+        store = _create_rendezvous_store("127.0.0.1", 4)
+        port = int(store.port)
+        processes = [
+            spawn.Process(target=_run_offset_tp_broadcast, args=(global_rank, port, output_queue))
+            for global_rank in range(4)
+        ]
+        for process in processes:
+            process.start()
+>       results = dict(output_queue.get(timeout=30) for _ in processes)
+
+tests/test_parallel_partition_cpu.py:144: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_parallel_partition_cpu.py:144: in <genexpr>
+    results = dict(output_queue.get(timeout=30) for _ in processes)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <multiprocessing.queues.Queue object at 0x7e0984e732e0>, block = True
+timeout = 29.99998839300133
+
+    def get(self, block=True, timeout=None):
+        if self._closed:
+            raise ValueError(f"Queue {self!r} is closed")
+        if block and timeout is None:
+            with self._rlock:
+                res = self._recv_bytes()
+            self._sem.release()
+        else:
+            if block:
+                deadline = time.monotonic() + timeout
+            if not self._rlock.acquire(block, timeout):
+                raise Empty
+            try:
+                if block:
+                    timeout = deadline - time.monotonic()
+                    if not self._poll(timeout):
+>                       raise Empty
+E                       _queue.Empty
+
+/usr/lib/python3.10/multiprocessing/queues.py:114: Empty
+----------------------------- Captured stdout call -----------------------------
+...............F.....................F.....................F.....................F...................................................................................................................ss........ss........          [100%].          [100%]............
+=================================== FAILURES ===================================
+____________ test_real_gloo_tp_broadcast_uses_partition_global_root ____________
+
+    def test_real_gloo_tp_broadcast_uses_partition_global_root() -> None:
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        # The coordinator holds the server store (port=0) so the resolved port is
+        # genuinely reserved before the workers join as client stores.
+        store = _create_rendezvous_store("127.0.0.1", 4)
+        port = int(store.port)
+        processes = [
+            spawn.Process(target=_run_offset_tp_broadcast, args=(global_rank, port, output_queue))
+            for global_rank in range(4)
+        ]
+        for process in processes:
+>           process.start()
+
+tests/test_parallel_partition_cpu.py:143: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.10/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+/usr/lib/python3.10/multiprocessing/context.py:288: in _Popen
+    return Popen(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_fork.py:19: in __init__
+    self._launch(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:42: in _launch
+    prep_data = spawn.get_preparation_data(process_obj._name)
+/usr/lib/python3.10/multiprocessing/spawn.py:154: in get_preparation_data
+    _check_not_importing_main()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _check_not_importing_main():
+        if getattr(process.current_process(), '_inheriting', False):
+>           raise RuntimeError('''
+            An attempt has been made to start a new process before the
+            current process has finished its bootstrapping phase.
+    
+            This probably means that you are not using fork to start your
+            child processes and you have forgotten to use the proper idiom
+            in the main module:
+    
+                if __name__ == '__main__':
+                    freeze_support()
+                    ...
+    
+            The "freeze_support()" line can be omitted if the program
+            is not going to be frozen to produce an executable.''')
+E           RuntimeError: 
+E                   An attempt has been made to start a new process before the
+E                   current process has finished its bootstrapping phase.
+E           
+E                   This probably means that you are not using fork to start your
+E                   child processes and you have forgotten to use the proper idiom
+E                   in the main module:
+E           
+E                       if __name__ == '__main__':
+E                           freeze_support()
+E                           ...
+E           
+E                   The "freeze_support()" line can be omitted if the program
+E                   is not going to be frozen to produce an executable.
+
+/usr/lib/python3.10/multiprocessing/spawn.py:134: RuntimeError
+=========================== short test summary info ============================
+FAILED tests/test_parallel_partition_cpu.py::test_real_gloo_tp_broadcast_uses_partition_global_root
+1 failed, 60 passed, 3 skipped in 26.04s
+
+=================================== FAILURES ===================================
+____________ test_real_gloo_tp_broadcast_uses_partition_global_root ____________
+
+    def test_real_gloo_tp_broadcast_uses_partition_global_root() -> None:
+        spawn = mp.get_context("spawn")
+        output_queue = spawn.Queue()
+        # The coordinator holds the server store (port=0) so the resolved port is
+        # genuinely reserved before the workers join as client stores.
+        store = _create_rendezvous_store("127.0.0.1", 4)
+        port = int(store.port)
+        processes = [
+            spawn.Process(target=_run_offset_tp_broadcast, args=(global_rank, port, output_queue))
+            for global_rank in range(4)
+        ]
+        for process in processes:
+>           process.start()
+
+tests/test_parallel_partition_cpu.py:143: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.10/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+/usr/lib/python3.10/multiprocessing/context.py:288: in _Popen
+    return Popen(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_fork.py:19: in __init__
+    self._launch(process_obj)
+/usr/lib/python3.10/multiprocessing/popen_spawn_posix.py:42: in _launch
+    prep_data = spawn.get_preparation_data(process_obj._name)
+/usr/lib/python3.10/multiprocessing/spawn.py:154: in get_preparation_data
+    _check_not_importing_main()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _check_not_importing_main():
+        if getattr(process.current_process(), '_inheriting', False):
+>           raise RuntimeError('''
+            An attempt has been made to start a new process before the
+            current process has finished its bootstrapping phase.
+    
+            This probably means that you are not using fork to start your
+            child processes and you have forgotten to use the proper idiom
+            in the main module:
+    
+                if __name__ == '__main__':
+                    freeze_support()
+                    ...
+    
+            The "freeze_support()" line can be omitted if the program
+            is not going to be frozen to produce an executable.''')
+E           RuntimeError: 
+E                   An attempt has been made to start a new process before the
+E                   current process has finished its bootstrapping phase.
+E           
+E                   This probably means that you are not using fork to start your
+E                   child processes and you have forgotten to use the proper idiom
+E                   in the main module:
+E           
+E                       if __name__ == '__main__':
+E                           freeze_support()
+E                           ...
+E           
+E                   The "freeze_support()" line can be omitted if the program
+E                   is not going to be frozen to produce an executable.
+
+/usr/lib/python3.10/multiprocessing/spawn.py:134: RuntimeError
+=========================== short test summary info ============================
+FAILED tests/test_parallel_partition_cpu.py::test_real_gloo_tp_broadcast_uses_partition_global_root
+1 failed, 60 passed, 3 skipped in 25.87s
+.ss......ss.....
+=========================== short test summary info ============================
+FAILED tests/test_parallel_partition_cpu.py::test_real_gloo_tp_broadcast_uses_partition_global_root
+1 failed, 60 passed, 3 skipped in 65.54s (0:01:05)
+PEAK_RSS_MIB 2387

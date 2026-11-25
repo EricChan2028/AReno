@@ -1,0 +1,38 @@
+loading checkpoint:   0%|          | 0/29 [00:00<?, ?stage/s]loading checkpoint:  31%|███       | 9/29 [00:00<00:00, 79.94stage/s]loading checkpoint:  59%|█████▊    | 17/29 [00:00<00:00, 73.14stage/s]loading checkpoint:  86%|████████▌ | 25/29 [00:00<00:00, 72.16stage/s]loading checkpoint: 100%|██████████| 29/29 [00:00<00:00, 72.90stage/s]
+2026-11-25 16:33:42 INFO areno.engine.inference inference.py:293 - KIVI KV cache: dtype=kivi2 group_size=32 residual_length=128 blocks=353 slots=9 bytes=2108424192
+2026-11-25 16:33:42 INFO areno.engine.inference inference.py:1755 - decode CUDA graphs ready: decode=4 verify=0 draft=0 skipped_buckets=0 free_gib=17.40
+2026-11-25 16:33:53 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=8 cuda_graph=True tokens_per_second=277.7
+2026-11-25 16:34:03 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=8 cuda_graph=True tokens_per_second=397.3
+2026-11-25 16:34:13 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=8 cuda_graph=True tokens_per_second=449.5
+2026-11-25 16:34:22 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=8 cuda_graph=True tokens_per_second=436.3
+2026-11-25 16:34:32 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=8 cuda_graph=True tokens_per_second=338.1
+2026-11-25 16:34:42 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=8 cuda_graph=True tokens_per_second=372.8
+2026-11-25 16:34:51 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=8 cuda_graph=True tokens_per_second=371.5
+2026-11-25 16:35:02 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=8 cuda_graph=True tokens_per_second=343.6
+2026-11-25 16:35:12 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=8 cuda_graph=True tokens_per_second=371.7
+2026-11-25 16:35:20 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=8 cuda_graph=True tokens_per_second=402.0
+2026-11-25 16:35:30 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=8 cuda_graph=True tokens_per_second=427.9
+2026-11-25 16:35:41 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=8 cuda_graph=True tokens_per_second=365.9
+2026-11-25 16:35:50 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=6 cuda_graph=True tokens_per_second=391.5
+2026-11-25 16:36:00 INFO areno.engine.inference inference.py:995 - rollout decode progress: dp=0/1 active=2 cuda_graph=True tokens_per_second=379.0
+{
+  "kv_cache_dtype": "kivi2",
+  "runtime": {
+    "attn_backend": "native",
+    "kv_cache_dtype": "kivi2",
+    "kivi_group_size": 32,
+    "kivi_residual_length": 128
+  },
+  "prompts": 64,
+  "samples_per_prompt": 1,
+  "temperature": 0.0,
+  "seed": null,
+  "accuracy": 0.59375,
+  "accuracy_stderr": 0.06139153767774106,
+  "generated_tokens": 54478,
+  "mean_response_tokens": 851.21875,
+  "rollout_seconds": 152.02747705100046,
+  "generated_tokens_per_s": 358.34311702564355,
+  "max_new_tokens": 2048,
+  "max_running_prompts": 8
+}

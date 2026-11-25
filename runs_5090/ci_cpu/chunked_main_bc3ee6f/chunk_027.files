@@ -1,0 +1,6 @@
+tests/test_sgl_jev_dense_cpu.py
+tests/test_speculative_cpu.py
+tests/test_speculative_rollout_cpu.py
+tests/test_svg_accuracy_reward_cpu.py
+tests/test_tokenizer_api_cpu.py
+tests/test_tokenizer_compat_cpu.py

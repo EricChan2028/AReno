@@ -1,0 +1,6 @@
+tests/test_qlora_cpu.py
+tests/test_qwen35_lora_cpu.py
+tests/test_qwen35_lora_cuda.py
+tests/test_qwen35_multimodal_cpu.py
+tests/test_qwen35_unfreeze_cpu.py
+tests/test_qwen3_lora_e2e.py

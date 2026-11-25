@@ -1,0 +1,6 @@
+tests/test_cancel_stop_token_cpu.py
+tests/test_chunked_prefill_cpu.py
+tests/test_cli_diagnostics_cpu.py
+tests/test_cli_model_refs_cpu.py
+tests/test_coding_agent_loop_cpu.py
+tests/test_config_data_cpu.py

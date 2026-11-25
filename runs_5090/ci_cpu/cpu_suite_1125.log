@@ -1,0 +1,9 @@
+2026-11-25 10:27:25 start pr at 1ec2a7a
+2026-11-25 10:35:45 STOPPING pr: RSS 4145 MiB > 4096 MiB
+2026-11-25 10:35:48 end pr exit=143 peak_rss=4145MiB: 
+2026-11-25 10:35:48 start main at bc3ee6f
+2026-11-25 10:48:07 STOPPING main: RSS 4104 MiB > 4096 MiB
+2026-11-25 10:48:13 end main exit=143 peak_rss=4104MiB: 
+2026-11-25 10:48:13 failures only on PR: 
+2026-11-25 10:48:13 failures only on main: 
+2026-11-25 10:48:13 CPU_SUITE_DONE
